@@ -9,8 +9,7 @@ import main.Models.Book;
 import main.Models.OwningLibrary;
 import main.Models.TimeManager;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.*;
@@ -24,7 +23,10 @@ import java.util.Scanner;
 public class LibraryServer {
 
     private static OwningLibrary library;
+
     private static TimeManager timeManager;
+    private final LocalTime OPENING_TIME = LocalTime.of(8, 0, 0);
+    private final LocalTime CLOSING_TIME = LocalTime.of(19, 0, 0);
 
 
     public static final String BOOKSFILE = "TextFiles/Books.txt";
@@ -110,6 +112,46 @@ public class LibraryServer {
         }//end switch
 
         return systemResponse;
+    }
+
+    private void readTime() {
+        try {
+            FileInputStream fTime = new FileInputStream(new File("TextFiles/TimeLog.bin"));
+            ObjectInputStream oTime = new ObjectInputStream(fTime);
+
+            try {
+                //Use file to create TimeManager
+                timeManager = (TimeManager) oTime.readObject();
+            } catch (EOFException ignored) {
+            }
+
+            fTime.close();
+            oTime.close();
+
+        } catch (FileNotFoundException f) {
+            //if no file, create a new TimeManager
+            timeManager = new TimeManager();
+        } catch (IOException i) {
+            System.out.println("Error initializing stream");
+        } catch (ClassNotFoundException c) {
+            System.out.println("could not find class");
+        }
+    }
+
+    private void writeTime() {
+        try {
+            //create a writer for the visitors
+            FileOutputStream fTime = new FileOutputStream(new File("TextFiles/TimeLog.bin"));
+            ObjectOutputStream oTime = new ObjectOutputStream(fTime);
+
+            //writes the time object into the file
+            oTime.writeObject(time);
+
+        } catch (FileNotFoundException f) {
+            System.out.println("Time File Not Found");
+        } catch (IOException i) {
+            System.out.println("Error initializing stream");
+        }
     }
 
     /*

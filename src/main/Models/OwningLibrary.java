@@ -25,15 +25,10 @@ public class OwningLibrary {
 
     private TimeManager time;
 
-    private LocalTime openingTime;
-    private LocalTime closingTime;
-
     /**
      * Creates a library with no books or visitors
      */
     public OwningLibrary(LocalTime openingTime, LocalTime closingTime) {
-        this.openingTime = openingTime;
-        this.closingTime = closingTime;
         openLibrary();
     }
 

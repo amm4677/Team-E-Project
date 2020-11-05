@@ -28,13 +28,13 @@ public class RegisterRequest implements Request {
     /**
      * Constructor for a new "register" Request
      *
-     * @param firstName the first name of the visitor
-     * @param lastName the last name of the visitor
-     * @param address the address of the visitor
-     * @param phoneNumber the phone number of the visitor
+
+     * @param library the library reference
+     * @param parameters Arraylist of all of the paramaters of the request
      */
     public RegisterRequest(OwningLibrary library, ArrayList<String> parameters) {
 
+        //todo do actual fact checking
         if(parameters.size() == 5) {
             this.firstName = parameters.get(1);
             this.lastName = parameters.get(2);

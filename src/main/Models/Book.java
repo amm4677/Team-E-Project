@@ -51,6 +51,22 @@ public class Book implements Serializable {
     //There is on "set" method for the ISBN because it should never change
 
     /**
+     * returns the title for this book
+     * @return the title for this book
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * returns the authors for this book
+     * @return the authors for this book
+     */
+    public String getAuthors() {
+        return authors;
+    }
+
+    /**
      * retruns this book's publisher
      * @return the name of this book's publisher
      */

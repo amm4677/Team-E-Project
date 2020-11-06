@@ -89,15 +89,9 @@ public class TimeManager implements Serializable {
     /*
         Updates the calendar to be accurate with current time difference and returns a Date object
      */
-    public Date getDate()
-    {
+    public Date getDate() {
         UpdateCalendar();
         return calendar.getTime();
-    }
-
-    public DateFormat getFormat()
-    {
-        return format;
     }
 
     /*

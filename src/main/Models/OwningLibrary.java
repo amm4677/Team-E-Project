@@ -29,6 +29,8 @@ public class OwningLibrary {
      * Creates a library with no books or visitors
      */
     public OwningLibrary() {
+        time = TimeManager.getInstance();
+
         readVisitors();
         readBooks();
     }
@@ -257,7 +259,7 @@ public class OwningLibrary {
         try {
             //create a writer for the daily visits
             FileOutputStream fTime = new FileOutputStream(new File("TextFiles/VisitLog-"
-                    + time.getFormat().format(time.getDate()) + ".bin"));
+                    + time.getFormattedDate() + ".bin"));
             ObjectOutputStream oTime = new ObjectOutputStream(fTime);
 
             //writes the time object into the file

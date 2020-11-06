@@ -123,11 +123,22 @@ public class TimeManager implements Serializable {
     @Override
     public String toString()
     {
-        this.UpdateCalendar();
-
         return "TimeManager{" +
-                "Date=" + format.format(calendar.getTime()) +
-                "Time=" + calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND) +
+                "Date=" + getFormattedDate() +
+                "Time=" + getFormattedTime() +
                 "}";
     }
+
+    public String getFormattedDate()
+    {
+        UpdateCalendar();
+        return format.format(calendar.getTime());
+    }
+
+    public String getFormattedTime()
+    {
+        UpdateCalendar();
+        return calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND);
+    }
+
 }

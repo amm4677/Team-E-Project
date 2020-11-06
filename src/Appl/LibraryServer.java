@@ -119,8 +119,11 @@ public class LibraryServer {
 
             try {
                 //Use file to create TimeManager
-                timeManager = (TimeManager) oTime.readObject();  ///            ********** HACK ***********
+                String[] timeInfo = ((String) oTime.readObject()).split(" ");
+                timeManager = TimeManager.createInstance(timeInfo[0], timeInfo[1]);
             } catch (EOFException ignored) {
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println(e);
             }
 
             fTime.close();
@@ -143,7 +146,7 @@ public class LibraryServer {
             ObjectOutputStream oTime = new ObjectOutputStream(fTime);
 
             //writes the time object into the file
-            oTime.writeObject(timeManager);
+            oTime.writeObject(timeManager.getFormattedDate() + " " + timeManager.getFormattedTime());
 
         } catch (FileNotFoundException f) {
             System.out.println("Time File Not Found");

@@ -28,8 +28,26 @@ public class OwningLibrary {
     /**
      * Creates a library with no books or visitors
      */
-    public OwningLibrary(LocalTime openingTime, LocalTime closingTime) {
-        openLibrary();
+    public OwningLibrary() {
+        readVisitors();
+        readBooks();
+    }
+
+    /**
+     * saves the visitors and Books to an external file
+     */
+    public void closeLibrary() {
+
+        writeVisitors();
+        writeBooks();
+
+
+        //Checks everyone out of the library for the day and writes a record of it
+        for (Visit v : Visits) {
+            if (v.getIsOngoingVisit()) v.endVisit(time.getDate());
+        }
+        writeVisits();
+        Visits.clear();
     }
 
     public void addBook(Book book, int copies) {
@@ -56,24 +74,6 @@ public class OwningLibrary {
                 "Inventory=" + Inventory.toString() +
                 ", Register=" + Register.toString() +
                 '}';
-    }
-
-    /**
-     * saves the visitors and Books to an external file
-     */
-    public void closeLibrary() {
-
-        writeVisitors();
-        writeBooks();
-        writeTime();
-
-
-        //Checks everyone out of the library for the day and writes a record of it
-        for (Visit v : Visits) {
-            if (v.getIsOngoingVisit()) v.endVisit(time.getDate());
-        }
-        writeVisits();
-        Visits.clear();
     }
 
     /**
@@ -106,16 +106,6 @@ public class OwningLibrary {
                 return;
             }
         }
-    }
-
-
-    /**
-     * loads the visitors and Books from an external file
-     */
-    public void openLibrary() {
-        readVisitors();
-        readBooks();
-        readTime();
     }
 
     /**
@@ -258,46 +248,6 @@ public class OwningLibrary {
 
         } catch (FileNotFoundException f) {
             System.out.println("Visitor File Not Found");
-        } catch (IOException i) {
-            System.out.println("Error initializing stream");
-        }
-    }
-
-    private void readTime() {
-        try {
-            FileInputStream fTime = new FileInputStream(new File("TextFiles/TimeLog.bin"));
-            ObjectInputStream oTime = new ObjectInputStream(fTime);
-
-            try {
-                //Use file to create TimeManager
-                time = (TimeManager) oTime.readObject();
-            } catch (EOFException ignored) {
-            }
-
-            fTime.close();
-            oTime.close();
-
-        } catch (FileNotFoundException f) {
-            //if no file, create a new TimeManager
-            time = new TimeManager();
-        } catch (IOException i) {
-            System.out.println("Error initializing stream");
-        } catch (ClassNotFoundException c) {
-            System.out.println("could not find class");
-        }
-    }
-
-    private void writeTime() {
-        try {
-            //create a writer for the visitors
-            FileOutputStream fTime = new FileOutputStream(new File("TextFiles/TimeLog.bin"));
-            ObjectOutputStream oTime = new ObjectOutputStream(fTime);
-
-            //writes the time object into the file
-            oTime.writeObject(time);
-
-        } catch (FileNotFoundException f) {
-            System.out.println("Time File Not Found");
         } catch (IOException i) {
             System.out.println("Error initializing stream");
         }

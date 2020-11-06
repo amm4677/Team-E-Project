@@ -28,7 +28,6 @@ public class LibraryServer {
     private final LocalTime OPENING_TIME = LocalTime.of(8, 0, 0);
     private final LocalTime CLOSING_TIME = LocalTime.of(19, 0, 0);
 
-
     public static final String BOOKSFILE = "TextFiles/Books.txt";
 
     public static Boolean isRunning = true;
@@ -36,8 +35,7 @@ public class LibraryServer {
     public static void main(String[] args) {
 
         //opens the library
-        library = new OwningLibrary(LocalTime.of(8, 0, 0),
-                LocalTime.of(19, 0, 0));
+        library = new OwningLibrary();
 
         HashMap<Long, Book> allBooks = new HashMap<Long, Book>();
 
@@ -121,7 +119,7 @@ public class LibraryServer {
 
             try {
                 //Use file to create TimeManager
-                timeManager = (TimeManager) oTime.readObject();
+                timeManager = (TimeManager) oTime.readObject();  ///            ********** HACK ***********
             } catch (EOFException ignored) {
             }
 
@@ -130,7 +128,7 @@ public class LibraryServer {
 
         } catch (FileNotFoundException f) {
             //if no file, create a new TimeManager
-            timeManager = new TimeManager();
+            timeManager = TimeManager.getInstance();
         } catch (IOException i) {
             System.out.println("Error initializing stream");
         } catch (ClassNotFoundException c) {
@@ -145,7 +143,7 @@ public class LibraryServer {
             ObjectOutputStream oTime = new ObjectOutputStream(fTime);
 
             //writes the time object into the file
-            oTime.writeObject(time);
+            oTime.writeObject(timeManager);
 
         } catch (FileNotFoundException f) {
             System.out.println("Time File Not Found");

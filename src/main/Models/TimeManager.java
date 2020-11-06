@@ -12,14 +12,34 @@ import java.util.Date;
  */
 public class TimeManager implements Serializable {
 
+    public static TimeManager _instance;
+
     private Calendar calendar;
     private SimpleDateFormat format;
     private long lastUpdatedTime;
 
+    public static TimeManager getInstance() {
+        if(_instance == null) _instance = new TimeManager();
+
+        return _instance;
+    }
+
+    public static TimeManager createInstance(String date, String time)
+    {
+        if(_instance != null)
+        {
+            System.err.println("An instance of TimeManager already exists");
+            return _instance;
+        }
+
+        _instance = new TimeManager(date, time);
+        return _instance;
+    }
+
     /*
         The default constructor for the class
      */
-    public TimeManager()
+    private TimeManager()
     {
         calendar = Calendar.getInstance();
         calendar.setTime(new Date());
@@ -27,7 +47,7 @@ public class TimeManager implements Serializable {
         lastUpdatedTime = System.currentTimeMillis();
     }
 
-    public TimeManager(String date, String time)
+    private TimeManager(String date, String time)
     {
         format = new SimpleDateFormat("yyyy-MM-dd");
         calendar = Calendar.getInstance();

@@ -1,12 +1,15 @@
 package Requests;
 
 import Resposes.InfoResponse;
+import Resposes.InvalidInfoResponse;
 import Resposes.Response;
+import main.Models.Book;
 import main.Models.LibraryEntry;
 import main.Models.OwningLibrary;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class InfoRequest implements Request {
@@ -47,11 +50,14 @@ public class InfoRequest implements Request {
     public Response performRequest() {
         ArrayList<LibraryEntry> books = new ArrayList<LibraryEntry>();
 
+        if(!(sortOrder.equals("title") || sortOrder.equals("publish-date") || sortOrder.equals("book-status")))
+            return new InvalidInfoResponse();
+
 
         for (LibraryEntry le : proxyLibrary.getInventory().values()) {
             if((title.equals("*") || le.getBook().getTitle().contains(title))
-            && (isbn.equals("*") || Long.toString(le.getBook().getISBN()).equals(isbn))
-            && (publisher.equals("*") || le.getBook().getTitle().equals(publisher))) {
+                    && (isbn.equals("*") || Long.toString(le.getBook().getISBN()).equals(isbn))
+                    && (publisher.equals("*") || le.getBook().getTitle().equals(publisher))) {
                 if(authors.equals("*"))
                     books.add(le);
                 else {
@@ -71,6 +77,18 @@ public class InfoRequest implements Request {
                     if(addBook) books.add(le);
                 }
             }
+        }
+
+        switch (sortOrder) {
+            case "title":
+                books.sort(Comparator.comparing(o -> o.getBook().getTitle()));
+                break;
+            case "publish-date":
+                books.sort(Comparator.comparing(o -> o.getBook().getPublishDate()));
+                break;
+            case "book-status":
+                books.sort(Comparator.comparingInt(LibraryEntry::getCopiesCheckedOut));
+                break;
         }
 
         return new InfoResponse(books);

@@ -21,6 +21,21 @@ public class InfoResponse implements Response {
 
     @Override
     public String getResponse() {
-        return null;
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("info,");
+        builder.append(books.size());
+
+        for (LibraryEntry e : books) {
+            builder.append(",<nl>");
+            builder.append(e.getBook().getTotalCopies() - e.getCopiesCheckedOut());
+            builder.append(",");
+            builder.append(e.getBook().getISBN());
+            builder.append(",");
+            builder.append("\"" + e.getBook().getTitle() + "\"");
+            builder.append(e.getBook().getAuthors());
+        }
+
+        return builder.toString();
     }
 }

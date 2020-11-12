@@ -4,8 +4,12 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * @author Anthony Ferraioli
@@ -133,6 +137,16 @@ public class TimeManager implements Serializable {
     {
         UpdateCalendar();
         return calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND);
+    }
+
+    public LocalTime getLocalTime() {
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S", Locale.US);
+
+        String text = "2011-02-18 05:00:00.0";
+        LocalDateTime localDateTime = LocalDateTime.parse(text, formatter);
+        LocalTime localTime = localDateTime.toLocalTime();
+        return localTime;
     }
 
 }

@@ -1,5 +1,5 @@
 package main.Models;
 
-public class ClosedLibrary {
+public class ClosedLibrary extends OwningLibrary {
 
 }

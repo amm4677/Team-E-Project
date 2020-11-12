@@ -5,9 +5,7 @@ import Requests.Request;
 import Requests.RequestNames;
 import Resposes.RegisterResponse;
 import Resposes.Response;
-import main.Models.Book;
-import main.Models.OwningLibrary;
-import main.Models.TimeManager;
+import main.Models.*;
 
 import java.io.*;
 import java.sql.Time;
@@ -25,8 +23,8 @@ public class LibraryServer {
     private static OwningLibrary library;
 
     private static TimeManager timeManager;
-    private final LocalTime OPENING_TIME = LocalTime.of(8, 0, 0);
-    private final LocalTime CLOSING_TIME = LocalTime.of(19, 0, 0);
+    private static final LocalTime OPENING_TIME = LocalTime.of(8, 0, 0);
+    private static final LocalTime CLOSING_TIME = LocalTime.of(19, 0, 0);
 
     public static final String BOOKSFILE = "TextFiles/Books.txt";
 
@@ -34,8 +32,10 @@ public class LibraryServer {
 
     public static void main(String[] args) {
 
-        //opens the library
-        library = new OwningLibrary();
+        LibraryServer.readTime();
+
+        //sets up library to be open or closed depending on time
+        checkLibraryStatus();
 
         HashMap<Long, Book> allBooks = new HashMap<Long, Book>();
 
@@ -112,7 +112,7 @@ public class LibraryServer {
         return systemResponse;
     }
 
-    private void readTime() {
+    private static void readTime() {
         try {
             FileInputStream fTime = new FileInputStream(new File("TextFiles/TimeLog.bin"));
             ObjectInputStream oTime = new ObjectInputStream(fTime);
@@ -139,7 +139,7 @@ public class LibraryServer {
         }
     }
 
-    private void writeTime() {
+    private static void writeTime() {
         try {
             //create a writer for the visitors
             FileOutputStream fTime = new FileOutputStream(new File("TextFiles/TimeLog.bin"));
@@ -152,6 +152,18 @@ public class LibraryServer {
             System.out.println("Time File Not Found");
         } catch (IOException i) {
             System.out.println("Error initializing stream");
+        }
+    }
+
+    private static void checkLibraryStatus() {
+
+        int openCompare = timeManager.getLocalTime().compareTo(OPENING_TIME);
+        int closeCompare = timeManager.getLocalTime().compareTo(CLOSING_TIME);
+
+        if(openCompare >= 0 && closeCompare < 0) library = new OpenLibrary();
+        else {
+            if(library != null) library.closeLibrary();
+            library = new ClosedLibrary();
         }
     }
 

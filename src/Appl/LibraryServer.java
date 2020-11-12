@@ -20,7 +20,7 @@ import java.util.Scanner;
  */
 public class LibraryServer {
 
-    private static OwningLibrary library;
+    private static LibraryBase library;
 
     private static TimeManager timeManager;
     private static final LocalTime OPENING_TIME = LocalTime.of(8, 0, 0);
@@ -35,6 +35,8 @@ public class LibraryServer {
         LibraryServer.readTime();
 
         //sets up library to be open or closed depending on time
+        library = new ClosedLibrary();
+        library.libraryStatus = LibraryBase.LibraryStatus.Default;
         checkLibraryStatus();
 
         HashMap<Long, Book> allBooks = new HashMap<Long, Book>();
@@ -160,8 +162,10 @@ public class LibraryServer {
         int openCompare = timeManager.getLocalTime().compareTo(OPENING_TIME);
         int closeCompare = timeManager.getLocalTime().compareTo(CLOSING_TIME);
 
-        if(openCompare >= 0 && closeCompare < 0) library = new OpenLibrary();
-        else {
+        //if within opening and closing hours and library is currently closed, switch to open
+        if(openCompare >= 0 && closeCompare < 0 && library.libraryStatus != LibraryBase.LibraryStatus.Open) library = new OpenLibrary();
+        //else if the library is outside the bounds of opening and closing time and is currently opened
+        else if(library.libraryStatus != LibraryBase.LibraryStatus.Closed){
             if(library != null) library.closeLibrary();
             library = new ClosedLibrary();
         }

@@ -4,111 +4,80 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.Map;
 
-public class OpenLibrary  extends OwningLibrary {
+public class OpenLibrary extends LibraryBase {
 
     public OpenLibrary() {
         super();
 
         readVisitors();
         readBooks();
+
+        libraryStatus = LibraryStatus.Open;
     }
 
     @Override
-    public void closeLibrary() {
+    public void addBook(Book book, int copies) {
+        LibraryEntry entry = new LibraryEntry(book, copies);
+        Inventory.put(book.getISBN(), entry);
+    }
 
-        super.closeLibrary();
+    @Override
+    public void addVisitor(Visitor visitor) {
+        Long ID = visitor.getID();
+        Register.put(ID, visitor);
+    }
 
-        //Checks everyone out of the library for the day and writes a record of it
+    /**
+     * Starts the visit of a registered visitor
+     *
+     * @param visitorID the visitor checking out the book, assuming they are not checked in
+     * @return the Visit object representing the status of their visit
+     */
+    @Override
+    public Visit startVisit(int visitorID) {
+        //Checks to make sure they aren't already checked in (visitors can check in multiple times per day)
         for (Visit v : Visits) {
-            if (v.getIsOngoingVisit()) v.endVisit(time.getDate());
+            if (v.getVisitorID() == visitorID && v.getIsOngoingVisit()) return v;
         }
-        writeVisits();
-        Visits.clear();
+
+        Visit v = new Visit(visitorID, time.getDate());
+        Visits.add(v);
+
+        return v;
     }
-
-
-
-
-
-    //=====================================================================================================================
-    //==================================================Readers and Writers================================================
-    //=====================================================================================================================
-
 
     /**
-     * A private helper method to read all of the saved Books from the file they were saved on
+     * Ends the present visit of the visitor, if they are currently checked in
+     *
+     * @param visitorID the visitor visiting the library
      */
-    private void readBooks() {
-        try {
-            FileInputStream fBook = new FileInputStream(new File("TextFiles/BookLog.bin"));
-            ObjectInputStream oBook = new ObjectInputStream(fBook);
-
-            boolean keepReading = true;
-            try {
-                while (keepReading) {
-                    LibraryEntry book = (LibraryEntry) oBook.readObject();
-                    this.Inventory.put(book.getISBN(), book);
-                }
-            } catch (EOFException ignored) {
+    @Override
+    public void endVisit(int visitorID) {
+        for (Visit v : Visits) {
+            if (v.getVisitorID() == visitorID && v.getIsOngoingVisit()) {
+                v.endVisit(time.getDate());
+                return;
             }
-
-            fBook.close();
-            oBook.close();
-
-        } catch (FileNotFoundException f) {
-            System.out.println("BookLog file not found");
-        } catch (IOException i) {
-            System.out.println("No Books In library");
-        } catch (ClassNotFoundException c) {
-            System.out.println("could not find class");
         }
     }
-
 
     /**
-     * A private helper method to read all of the saved Visitors from the file they were saved on
+     * Allows a given visitor to check out a book
+     *
+     * @param visitor the visitor checking out the book
+     * @param ISBN    the ISBN of the book being checked out
+     * @return if the visitor successfully checked out the book or not
      */
-    private void readVisitors() {
-        try {
-            FileInputStream fVisitor = new FileInputStream(new File("TextFiles/VisitorLog.bin"));
-            ObjectInputStream oVisitor = new ObjectInputStream(fVisitor);
-
-            boolean keepReading = true;
-            try {
-                while (keepReading) {
-                    Visitor visitor = (Visitor) oVisitor.readObject();
-                    this.Register.put(visitor.getID(), visitor);
-                    // oVisitor = new ObjectInputStream(fVisitor);
-                }
-            } catch (EOFException ignored) {
+    @Override
+    public boolean visitorCheckOut(Visitor visitor, Long ISBN) {
+        if (Inventory.containsKey(ISBN)) {
+            //retrive the book objject that the Library entry is wrapping
+            Book book = Inventory.get(ISBN).getBook();
+            if (Inventory.get(ISBN).canBeCheckedOut() && visitor.addCheckedOutBook(book)) {
+                Inventory.get(ISBN).checkoutBook();
+                return true;
             }
-
-            fVisitor.close();
-            oVisitor.close();
-
-        } catch (FileNotFoundException f) {
-            System.out.println("VisitorLog file not found");
-        } catch (IOException i) {
-            System.out.println("No Visitors registered in library");
-        } catch (ClassNotFoundException c) {
-            System.out.println("could not find class");
         }
-    }
-
-    private void writeVisits() {
-        try {
-            //create a writer for the daily visits
-            FileOutputStream fTime = new FileOutputStream(new File("TextFiles/VisitLog-"
-                    + time.getFormattedDate() + ".bin"));
-            ObjectOutputStream oTime = new ObjectOutputStream(fTime);
-
-            //writes the time object into the file
-            oTime.writeObject(Visits);
-
-        } catch (FileNotFoundException f) {
-            System.out.println("Visit log file Not Found");
-        } catch (IOException i) {
-            System.out.println("Error initializing stream");
-        }
+        return false;
     }
 }

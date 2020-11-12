@@ -17,24 +17,31 @@ import java.util.Map;
  * @author Joseph Saltalamacchia
  */
 
+
+
+   //TODO                       /*          DEPRECATED      */
 public class OwningLibrary {
 
-    private HashMap<Long, LibraryEntry> Inventory = new HashMap<Long, LibraryEntry>();
-    private HashMap<Long, Visitor> Register = new HashMap<Long, Visitor>();
-    private ArrayList<Visit> Visits = new ArrayList<Visit>();
+    protected HashMap<Long, LibraryEntry> Inventory = new HashMap<Long, LibraryEntry>();
+    protected HashMap<Long, Visitor> Register = new HashMap<Long, Visitor>();
+    protected ArrayList<Visit> Visits = new ArrayList<Visit>();
 
-    private TimeManager time;
-
-    private LocalTime openingTime;
-    private LocalTime closingTime;
+    protected TimeManager time;
 
     /**
      * Creates a library with no books or visitors
      */
-    public OwningLibrary(LocalTime openingTime, LocalTime closingTime) {
-        this.openingTime = openingTime;
-        this.closingTime = closingTime;
-        openLibrary();
+    public OwningLibrary() {
+        time = TimeManager.getInstance();
+    }
+
+    /**
+     * saves the visitors and Books to an external file
+     */
+    public void closeLibrary() {
+
+        writeVisitors();
+        writeBooks();
     }
 
     public void addBook(Book book, int copies) {
@@ -61,24 +68,6 @@ public class OwningLibrary {
                 "Inventory=" + Inventory.toString() +
                 ", Register=" + Register.toString() +
                 '}';
-    }
-
-    /**
-     * saves the visitors and Books to an external file
-     */
-    public void closeLibrary() {
-
-        writeVisitors();
-        writeBooks();
-        writeTime();
-
-
-        //Checks everyone out of the library for the day and writes a record of it
-        for (Visit v : Visits) {
-            if (v.getIsOngoingVisit()) v.endVisit(time.getDate());
-        }
-        writeVisits();
-        Visits.clear();
     }
 
     /**
@@ -114,6 +103,7 @@ public class OwningLibrary {
 
         return null;
     }
+
 
     /**
      * /searches the library to see if it owns at least one copy of a given book
@@ -165,70 +155,12 @@ public class OwningLibrary {
     }
 
 
+
+
     //=====================================================================================================================
     //==================================================Readers and Writers================================================
     //=====================================================================================================================
 
-
-    /**
-     * A private helper method to read all of the saved Books from the file they were saved on
-     */
-    private void readBooks() {
-        try {
-            FileInputStream fBook = new FileInputStream(new File("TextFiles/BookLog.bin"));
-            ObjectInputStream oBook = new ObjectInputStream(fBook);
-
-            boolean keepReading = true;
-            try {
-                while (keepReading) {
-                    LibraryEntry book = (LibraryEntry) oBook.readObject();
-                    this.Inventory.put(book.getISBN(), book);
-                }
-            } catch (EOFException ignored) {
-            }
-
-            fBook.close();
-            oBook.close();
-
-        } catch (FileNotFoundException f) {
-            System.out.println("BookLog file not found");
-        } catch (IOException i) {
-            System.out.println("No Books In library");
-        } catch (ClassNotFoundException c) {
-            System.out.println("could not find class");
-        }
-    }
-
-
-    /**
-     * A private helper method to read all of the saved Visitors from the file they were saved on
-     */
-    private void readVisitors() {
-        try {
-            FileInputStream fVisitor = new FileInputStream(new File("TextFiles/VisitorLog.bin"));
-            ObjectInputStream oVisitor = new ObjectInputStream(fVisitor);
-
-            boolean keepReading = true;
-            try {
-                while (keepReading) {
-                    Visitor visitor = (Visitor) oVisitor.readObject();
-                    this.Register.put(visitor.getID(), visitor);
-                    // oVisitor = new ObjectInputStream(fVisitor);
-                }
-            } catch (EOFException ignored) {
-            }
-
-            fVisitor.close();
-            oVisitor.close();
-
-        } catch (FileNotFoundException f) {
-            System.out.println("VisitorLog file not found");
-        } catch (IOException i) {
-            System.out.println("No Visitors registered in library");
-        } catch (ClassNotFoundException c) {
-            System.out.println("could not find class");
-        }
-    }
 
     /**
      * private helper method to print Visitors out to a file
@@ -290,62 +222,8 @@ public class OwningLibrary {
         }
     }
 
-    private void readTime() {
-        try {
-            FileInputStream fTime = new FileInputStream(new File("TextFiles/TimeLog.bin"));
-            ObjectInputStream oTime = new ObjectInputStream(fTime);
 
-            try {
-                //Use file to create TimeManager
-                time = (TimeManager) oTime.readObject();
-            } catch (EOFException ignored) {
-            }
 
-            fTime.close();
-            oTime.close();
-
-        } catch (FileNotFoundException f) {
-            //if no file, create a new TimeManager
-            time = new TimeManager();
-        } catch (IOException i) {
-            System.out.println("Error initializing stream");
-        } catch (ClassNotFoundException c) {
-            System.out.println("could not find class");
-        }
-    }
-
-    private void writeTime() {
-        try {
-            //create a writer for the visitors
-            FileOutputStream fTime = new FileOutputStream(new File("TextFiles/TimeLog.bin"));
-            ObjectOutputStream oTime = new ObjectOutputStream(fTime);
-
-            //writes the time object into the file
-            oTime.writeObject(time);
-
-        } catch (FileNotFoundException f) {
-            System.out.println("Time File Not Found");
-        } catch (IOException i) {
-            System.out.println("Error initializing stream");
-        }
-    }
-
-    private void writeVisits() {
-        try {
-            //create a writer for the daily visits
-            FileOutputStream fTime = new FileOutputStream(new File("TextFiles/VisitLog-"
-                    + time.getFormat().format(time.getDate()) + ".bin"));
-            ObjectOutputStream oTime = new ObjectOutputStream(fTime);
-
-            //writes the time object into the file
-            oTime.writeObject(Visits);
-
-        } catch (FileNotFoundException f) {
-            System.out.println("Visit log file Not Found");
-        } catch (IOException i) {
-            System.out.println("Error initializing stream");
-        }
-    }
 /*
     private void writeReport(int month, int year)
     {

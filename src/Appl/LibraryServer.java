@@ -4,13 +4,15 @@ import Requests.*;
 //import Resposes.BuyResponse;
 import Resposes.RegisterResponse;
 import Resposes.Response;
+
+
 import main.Models.Book;
 import main.Models.OwningLibrary;
 import main.Models.TimeManager;
 import main.Models.Visitor;
+import main.Models.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.sql.Time;
 import java.time.LocalTime;
 import java.util.*;
@@ -23,10 +25,12 @@ import java.util.Scanner;
  */
 public class LibraryServer {
 
-    private static OwningLibrary library;
-    private static TimeManager timeManager;
     private static HashMap<Long, Book> bookStore;
+    private static LibraryBase library;
 
+    private static TimeManager timeManager;
+    private static final LocalTime OPENING_TIME = LocalTime.of(8, 0, 0);
+    private static final LocalTime CLOSING_TIME = LocalTime.of(19, 0, 0);
 
     public static final String BOOKSFILE = "TextFiles/Books.txt";
 
@@ -34,9 +38,10 @@ public class LibraryServer {
 
     public static void main(String[] args) {
 
-        //opens the library
-        library = new OwningLibrary(LocalTime.of(8, 0, 0),
-                LocalTime.of(19, 0, 0));
+        LibraryServer.readTime();
+
+        //sets up library to be open or closed depending on time
+        checkLibraryStatus();
 
         bookStore = new HashMap<Long, Book>();
 
@@ -133,6 +138,72 @@ public class LibraryServer {
         return systemResponse;
     }
 
+
+    private static void readTime() {
+        try {
+            FileInputStream fTime = new FileInputStream(new File("TextFiles/TimeLog.bin"));
+            ObjectInputStream oTime = new ObjectInputStream(fTime);
+
+            try {
+                //Use file to create TimeManager
+                String[] timeInfo = ((String) oTime.readObject()).split(" ");
+                timeManager = TimeManager.createInstance(timeInfo[0], timeInfo[1]);
+            } catch (EOFException ignored) {
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println(e);
+            }
+
+            fTime.close();
+            oTime.close();
+
+        } catch (FileNotFoundException f) {
+            //if no file, create a new TimeManager
+            timeManager = TimeManager.getInstance();
+        } catch (IOException i) {
+            System.out.println("Error initializing stream");
+        } catch (ClassNotFoundException c) {
+            System.out.println("could not find class");
+        }
+    }
+
+    private static void writeTime() {
+        try {
+            //create a writer for the visitors
+            FileOutputStream fTime = new FileOutputStream(new File("TextFiles/TimeLog.bin"));
+            ObjectOutputStream oTime = new ObjectOutputStream(fTime);
+
+            //writes the time object into the file
+            oTime.writeObject(timeManager.getFormattedDate() + " " + timeManager.getFormattedTime());
+
+        } catch (FileNotFoundException f) {
+            System.out.println("Time File Not Found");
+        } catch (IOException i) {
+            System.out.println("Error initializing stream");
+        }
+    }
+
+    private static void checkLibraryStatus() {
+
+        int openCompare = timeManager.getLocalTime().compareTo(OPENING_TIME);
+        int closeCompare = timeManager.getLocalTime().compareTo(CLOSING_TIME);
+
+        //can't have a null library, make closed with a status of default so it can be overridden by one of the two cases.
+        if(library == null)
+        {
+            library = new ClosedLibrary();
+            library.libraryStatus = LibraryBase.LibraryStatus.Default;
+        }
+
+        //if within opening and closing hours and library is not open, make an OpenLibrary()
+        if(openCompare >= 0 && closeCompare < 0 && library.libraryStatus != LibraryBase.LibraryStatus.Open) library = new OpenLibrary();
+        //else if the library is outside the bounds of opening and closing time and is not closed, make a ClosedLibrary()
+        else if(library.libraryStatus != LibraryBase.LibraryStatus.Closed){
+            library.closeLibrary();
+            library = new ClosedLibrary();
+        }
+    }
+
+   
 /*
     private static ArrayList<String> splitCSV(String masterString) {
         ArrayList<String> arguments = new ArrayList<String>();

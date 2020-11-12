@@ -2,6 +2,7 @@ package Requests;
 
 import Resposes.RegisterResponse;
 import Resposes.Response;
+import main.Models.LibraryBase;
 import main.Models.OwningLibrary;
 import main.Models.Visitor;
 
@@ -15,7 +16,7 @@ public class RegisterRequest implements Request {
     RequestNames.RequestName Command = RequestNames.RequestName.REGISTER;
 
     //a proxy for the library that the Visitor is being added to
-    private OwningLibrary proxyLibrary;
+    private LibraryBase proxyLibrary;
 
     //a counter to increment the Visitor's id every time a new one is created, ensuring that every ID is unique
     private static Long nextVisitorID = Long.valueOf(1000000000);
@@ -25,14 +26,14 @@ public class RegisterRequest implements Request {
     private String address;
     private String phoneNumber;
 
-    /**
+    /*
      * Constructor for a new "register" Request
      *
 
      * @param library the library reference
      * @param parameters Arraylist of all of the paramaters of the request
-     */
-    public RegisterRequest(OwningLibrary library, ArrayList<String> parameters) {
+*/
+    public RegisterRequest(LibraryBase library, ArrayList<String> parameters) {
 
         //todo do actual fact checking
         if(parameters.size() == 5) {

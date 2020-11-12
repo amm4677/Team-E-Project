@@ -1,7 +1,6 @@
 package main.Models;
 
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -16,7 +15,9 @@ import java.util.Locale;
  */
 public class TimeManager implements Serializable {
 
-    public static TimeManager _instance;
+    private static TimeManager _instance;
+
+    private Date startDate;
 
     private Calendar calendar;
     private SimpleDateFormat format;
@@ -46,7 +47,9 @@ public class TimeManager implements Serializable {
     private TimeManager()
     {
         calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
+
+        startDate = new Date();
+        calendar.setTime(startDate);
         format = new SimpleDateFormat("yyyy-MM-dd");
         lastUpdatedTime = System.currentTimeMillis();
     }
@@ -59,6 +62,7 @@ public class TimeManager implements Serializable {
         //set the date for the calendar
         try {
             calendar.setTime(format.parse(date));
+            startDate = calendar.getTime();
         } catch (ParseException e) {
             //Do something
         }
@@ -145,8 +149,13 @@ public class TimeManager implements Serializable {
 
         String text = "2011-02-18 05:00:00.0";
         LocalDateTime localDateTime = LocalDateTime.parse(text, formatter);
-        LocalTime localTime = localDateTime.toLocalTime();
-        return localTime;
+        return localDateTime.toLocalTime();
     }
 
+    public int daysPassedSinceStartup()
+    {
+        UpdateCalendar();
+        long difference = calendar.getTime().getTime() - startDate.getTime();
+        return (int)(difference / (1000*60*60*24));
+    }
 }

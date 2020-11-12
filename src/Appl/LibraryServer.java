@@ -35,8 +35,6 @@ public class LibraryServer {
         LibraryServer.readTime();
 
         //sets up library to be open or closed depending on time
-        library = new ClosedLibrary();
-        library.libraryStatus = LibraryBase.LibraryStatus.Default;
         checkLibraryStatus();
 
         HashMap<Long, Book> allBooks = new HashMap<Long, Book>();
@@ -162,11 +160,18 @@ public class LibraryServer {
         int openCompare = timeManager.getLocalTime().compareTo(OPENING_TIME);
         int closeCompare = timeManager.getLocalTime().compareTo(CLOSING_TIME);
 
-        //if within opening and closing hours and library is currently closed, switch to open
+        //can't have a null library, make closed with a status of default so it can be overridden by one of the two cases.
+        if(library == null)
+        {
+            library = new ClosedLibrary();
+            library.libraryStatus = LibraryBase.LibraryStatus.Default;
+        }
+
+        //if within opening and closing hours and library is not open, make an OpenLibrary()
         if(openCompare >= 0 && closeCompare < 0 && library.libraryStatus != LibraryBase.LibraryStatus.Open) library = new OpenLibrary();
-        //else if the library is outside the bounds of opening and closing time and is currently opened
+        //else if the library is outside the bounds of opening and closing time and is not closed, make a ClosedLibrary()
         else if(library.libraryStatus != LibraryBase.LibraryStatus.Closed){
-            if(library != null) library.closeLibrary();
+            library.closeLibrary();
             library = new ClosedLibrary();
         }
     }

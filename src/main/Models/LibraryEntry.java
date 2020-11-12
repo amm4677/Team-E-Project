@@ -12,7 +12,7 @@ public class LibraryEntry implements Serializable {
     private int totalCopies;
     private int copiesCheckedOut;
 
-    public LibraryEntry(Book Book, int totalCopies) {
+    public LibraryEntry(Book book, int totalCopies) {
         this.book = book;
         this.totalCopies = totalCopies;
         this.copiesCheckedOut = 0;

@@ -38,7 +38,15 @@ public class OwningLibrary {
     }
 
     public void addBook(Book book, int copies) {
+
         LibraryEntry entry = new LibraryEntry(book, copies);
+        long addedISBN = entry.getISBN();
+
+        //if the library entry already exists in the library, just increase the number of copies it has
+        if(Inventory.containsKey(addedISBN)) {
+            Inventory.get(addedISBN).buyMoreCopies(copies);
+        }
+
         Inventory.put(book.getISBN(), entry);
     }
 
@@ -155,7 +163,7 @@ public class OwningLibrary {
     public Boolean visitorCheckOut(Visitor visitor, long ISBN) {
         if (Inventory.containsKey(ISBN)) {
             //retrive the book objject that the Library entry is wrapping
-            Book book = Inventory.get(ISBN).getBook();
+            Book book = Inventory.get(ISBN).getBook(); //todo: is this line necessary?
             if (Inventory.get(ISBN).canBeCheckedOut() && visitor.addCheckedOutBook(book)) {
                 Inventory.get(ISBN).checkoutBook();
                 return true;
@@ -164,6 +172,13 @@ public class OwningLibrary {
         return false;
     }
 
+    /**
+     * a method that returns a list of visits currently saved by the library, for testing purposes
+     * @return the list of visits
+     */
+    public ArrayList<Visit> getVisits(){
+        return Visits;
+    }
 
     //=====================================================================================================================
     //==================================================Readers and Writers================================================

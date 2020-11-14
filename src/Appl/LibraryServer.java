@@ -1,8 +1,6 @@
 package Appl;
 
-import Requests.RegisterRequest;
-import Requests.Request;
-import Requests.RequestNames;
+import Requests.*;
 import Resposes.RegisterResponse;
 import Resposes.Response;
 import main.Models.Book;
@@ -25,6 +23,7 @@ public class LibraryServer {
 
     private static OwningLibrary library;
     private static TimeManager timeManager;
+    private static HashMap<Long, Book> allBooks = new HashMap<Long, Book>();
 
 
     public static final String BOOKSFILE = "TextFiles/Books.txt";
@@ -37,7 +36,6 @@ public class LibraryServer {
         library = new OwningLibrary(LocalTime.of(8, 0, 0),
                 LocalTime.of(19, 0, 0));
 
-        HashMap<Long, Book> allBooks = new HashMap<Long, Book>();
 
       // Scanner reader = new Scanner(new File(BOOKSFILE))
 
@@ -96,13 +94,21 @@ public class LibraryServer {
                 isRunning = false;
                 break;
             case "register":
-                System.out.println(parameters.size());
                 if(parameters.size() == 5) {
                     userRequest = new RegisterRequest(library, parameters);
                     //userRequest = new RegisterRequest(parameters.get(1), parameters.get(2), parameters.get(3),
                     //                                   parameters.get(4), library);
                     systemResponse = userRequest.performRequest();
                 }
+                break;
+            case "info":
+                userRequest = new InfoRequest(library, parameters);
+                systemResponse = userRequest.performRequest();
+                break;
+
+            case "search":
+                userRequest = new SearchRequest(allBooks.values(), parameters);
+                systemResponse = userRequest.performRequest();
                 break;
             default:
                 System.out.println("Invalid command, please try again");

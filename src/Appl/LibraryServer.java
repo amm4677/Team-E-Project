@@ -1,7 +1,8 @@
 package Appl;
 
 import Requests.*;
-//import Resposes.BuyResponse;
+
+import Resposes.BuyResponse;
 import Resposes.RegisterResponse;
 import Resposes.Response;
 import main.Models.Book;
@@ -25,7 +26,9 @@ public class LibraryServer {
 
     private static OwningLibrary library;
     private static TimeManager timeManager;
+
     private static HashMap<Long, Book> bookStore;
+
 
 
     public static final String BOOKSFILE = "TextFiles/Books.txt";
@@ -115,6 +118,15 @@ public class LibraryServer {
                     systemResponse = userRequest.performRequest();
                 }
                 break;
+            case "info":
+                userRequest = new InfoRequest(library, parameters);
+                systemResponse = userRequest.performRequest();
+                break;
+
+            case "search":
+                if(parameters.size() > 2) {
+                    userRequest = new SearchRequest(bookStore.values(), parameters);
+                break;
             case "borrow":
                 if(parameters.size() == 2){
                     userRequest = new BorrowRequest(library, parameters);
@@ -135,7 +147,7 @@ public class LibraryServer {
         return systemResponse;
     }
 
-/*
+    /*
     private static ArrayList<String> splitCSV(String masterString) {
         ArrayList<String> arguments = new ArrayList<String>();
 

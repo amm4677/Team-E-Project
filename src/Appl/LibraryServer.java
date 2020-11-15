@@ -1,7 +1,8 @@
 package Appl;
 
 import Requests.*;
-//import Resposes.BuyResponse;
+
+import Resposes.BuyResponse;
 import Resposes.RegisterResponse;
 import Resposes.Response;
 import main.Models.Book;
@@ -25,7 +26,9 @@ public class LibraryServer {
 
     private static OwningLibrary library;
     private static TimeManager timeManager;
+  
     private static HashMap<Long, Book> bookStore;
+
 
 
     public static final String BOOKSFILE = "TextFiles/Books.txt";
@@ -114,6 +117,15 @@ public class LibraryServer {
                     userRequest = new EndVisitRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
+                break;
+            case "info":
+                userRequest = new InfoRequest(library, parameters);
+                systemResponse = userRequest.performRequest();
+                break;
+
+            case "search":
+                userRequest = new SearchRequest(bookStore.values(), parameters);
+                systemResponse = userRequest.performRequest();
                 break;
             case "buy":
                 //todo this needs to become a request/response, and checking needs to happen

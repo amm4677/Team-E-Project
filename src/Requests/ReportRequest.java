@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * Represents the "Statistics" request, reports library info
  */
 
+//todo: just this entire thing
 public class ReportRequest implements Request{
 
     RequestNames.RequestName Command = RequestNames.RequestName.REPORT;

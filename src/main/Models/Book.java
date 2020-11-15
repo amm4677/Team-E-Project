@@ -158,7 +158,7 @@ public class Book implements Serializable {
     //todo I left this commented out for now because I'm not sure if we want to set error states for invalid numbers of
     // check-ins and check-outs
 
-  /*  *//**
+    /*  *//**
      * Check out additional copies of this book
      * @param numberOfCopies the number of copies of this book to be checked out. Numbers lower than zero are treated as
      *                       zero, numbers that, when added to the current number of books checked out, are greater than

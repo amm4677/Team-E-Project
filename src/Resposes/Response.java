@@ -4,7 +4,7 @@ import Requests.RequestNames;
 
 public interface Response {
 
-    public RequestNames.RequestName getCommand();
+    RequestNames.RequestName getCommand();
 
-    public String getResponse();
+    String getResponse();
 }

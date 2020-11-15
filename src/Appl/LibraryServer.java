@@ -7,16 +7,14 @@ import Resposes.Response;
 import main.Models.Book;
 import main.Models.OwningLibrary;
 import main.Models.TimeManager;
-import main.Models.Visitor;
+import View.MyFrame;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.Time;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.Scanner;
 
 /**
  *
@@ -48,7 +46,7 @@ public class LibraryServer {
             System.out.println("Could dont Find Books file");
         }
 
-        StringBuilder commandBuilder = new StringBuilder();
+        /*StringBuilder commandBuilder = new StringBuilder();
         Scanner commandScanner = new Scanner(System.in);
 
         do {
@@ -82,7 +80,11 @@ public class LibraryServer {
         library.closeLibrary();
 
         //used to test that the system worked
-        //testPersistence(library);
+        //testPersistence(library);*/
+
+        MyFrame frame = new MyFrame();
+
+        frame.setVisible(true);
 
     }
 

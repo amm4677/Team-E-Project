@@ -125,7 +125,7 @@ public class LibraryServer {
 
             case "search":
                 if(parameters.size() > 2) {
-                    userRequest = new SearchRequest(allBooks.values(), parameters);
+                    userRequest = new SearchRequest(bookStore.values(), parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;

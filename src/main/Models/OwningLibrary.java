@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Joseph Saltalamacchia
  */
 
-public class OwningLibrary {
+public class OwningLibrary implements Serializable{
 
     private HashMap<Long, LibraryEntry> Inventory = new HashMap<Long, LibraryEntry>();
     private HashMap<Long, Visitor> Register = new HashMap<Long, Visitor>();
@@ -37,7 +37,7 @@ public class OwningLibrary {
         openLibrary();
     }
 
-    public void addBook(Book book, int copies) {
+    public LibraryEntry addBook(Book book, int copies) {
 
         LibraryEntry entry = new LibraryEntry(book, copies);
         long addedISBN = entry.getISBN();
@@ -46,8 +46,11 @@ public class OwningLibrary {
         if(Inventory.containsKey(addedISBN)) {
             Inventory.get(addedISBN).buyMoreCopies(copies);
         }
+        else {
+            Inventory.put(addedISBN, entry);
+        }
 
-        Inventory.put(book.getISBN(), entry);
+        return Inventory.get(addedISBN);
     }
 
     public void addVisitor(Visitor visitor) {

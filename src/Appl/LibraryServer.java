@@ -100,7 +100,6 @@ public class LibraryServer {
                 if(parameters.size() == 5) {
                     userRequest = new RegisterRequest(library,parameters);
                     systemResponse = userRequest.performRequest();
-                    System.out.println(library.getRegister());
                 }
                 break;
             case "arrive":
@@ -108,21 +107,18 @@ public class LibraryServer {
                 {
                     userRequest = new ArriveRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
-                    System.out.println(library.getVisits());
                 }
                 break;
             case "depart":
                 if(parameters.size()==2){
                     userRequest = new EndVisitRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
-                    System.out.println(library.getVisits());
                 }
                 break;
             case "borrow":
                 if(parameters.size() == 2){
                     userRequest = new BorrowRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
-                    System.out.println(library.getInventory());
                 }
                 break;
             case "buy":
@@ -198,6 +194,6 @@ public class LibraryServer {
         testLibrary.openLibrary();
 
         System.out.println(testLibrary.toString());
-    }
-*/
+    }*/
+
 }

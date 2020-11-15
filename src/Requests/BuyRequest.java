@@ -3,6 +3,7 @@ package Requests;
 import Resposes.BuyResponse;
 import Resposes.Response;
 import main.Models.Book;
+import main.Models.LibraryEntry;
 import main.Models.OwningLibrary;
 
 import java.util.ArrayList;
@@ -34,9 +35,9 @@ public class BuyRequest implements Request {
 
             //if the id is valid, add it to the list
             if(tempID != -1) {
+                ids.add(tempID);
                 System.out.println(tempID);
                 System.out.println(ids);
-                ids.add(tempID);
             }
         }
 
@@ -51,10 +52,9 @@ public class BuyRequest implements Request {
 
         for(long id : ids){
             Book bookToAdd = bookstoreProxy.get(id);
+            LibraryEntry addedBook = libraryProxy.addBook(bookToAdd, quantity);
 
-            libraryProxy.addBook(bookToAdd, quantity);
-
-            booksAdded.append(bookToAdd.toString() + ", ");
+            booksAdded.append(addedBook.toString() + ", ");
         }
 
         //removes the last two appended characters (the last ", ")

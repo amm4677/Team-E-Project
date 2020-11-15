@@ -1,5 +1,6 @@
 package main.Models;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Calendar;
 
@@ -10,7 +11,7 @@ import java.util.Calendar;
  * @author Alanna Morris
  */
 
-public class CheckedOut {
+public class CheckedOut implements Serializable {
 
     private Book book;
     private long VisitorID;

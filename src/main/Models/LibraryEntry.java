@@ -52,8 +52,7 @@ public class LibraryEntry implements Serializable {
 
     @Override
     public String toString() {
-        return "LibraryEntry{" +
-                "ISBN=" + book.getISBN() +
+        return  book.toString() +
                 ", totalCopies=" + totalCopies +
                 ", copiesCheckedOut=" + copiesCheckedOut +
                 '}';

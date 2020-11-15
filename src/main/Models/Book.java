@@ -145,14 +145,11 @@ public class Book implements Serializable {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "ISBN=" + ISBN +
+        return "ISBN=" + ISBN +
+                ", title=" + title +
                 ", publisher='" + publisher + '\'' +
                 ", publishDate=" + publishDate +
-                ", totalPages=" + totalPages +
-                ", totalCopies=" + totalCopies +
-                ", copiesCheckedOut=" + copiesCheckedOut +
-                '}';
+                ", totalPages=" + totalPages;
     }
 
     //todo I left this commented out for now because I'm not sure if we want to set error states for invalid numbers of

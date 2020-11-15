@@ -87,7 +87,7 @@ public class OwningLibrary {
      * @param visitorID the visitor checking out the book, assuming they are not checked in
      * @return the Visit object representing the status of their visit
      */
-    public Visit startVisit(int visitorID) {
+    public Visit startVisit(long visitorID) {
         //Checks to make sure they aren't already checked in (visitors can check in multiple times per day)
         for (Visit v : Visits) {
             if (v.getVisitorID() == visitorID && v.getIsOngoingVisit()) return v;
@@ -104,15 +104,37 @@ public class OwningLibrary {
      *
      * @param visitorID the visitor visiting the library
      */
-    public void endVisit(int visitorID) {
+    public Visit endVisit(long visitorID) {
         for (Visit v : Visits) {
             if (v.getVisitorID() == visitorID && v.getIsOngoingVisit()) {
                 v.endVisit(time.getDate());
-                return;
+                return v;
             }
         }
+
+        return null;
     }
 
+    /**
+     * /searches the library to see if it owns at least one copy of a given book
+     * @param ISBN the ISBN of the book in question
+     * @return True if the book exists, false otherwise
+     *
+     */
+    public boolean containsBook(long ISBN){
+        return this.Inventory.containsKey(ISBN);
+    }
+
+    /**
+     * Allows a visitor to borrow a book from the library
+     * @param VisitorID the ID of the visitor attempting to check out the book
+     * @param ISBN the ISBN of the book attempting to be checked out
+     * @return true if the book was sussessfully checked out, false otherwise
+     */
+    public boolean borrowBook(long VisitorID, long ISBN){
+        Inventory.get(ISBN).checkoutBook();
+        return Register.get(VisitorID).addCheckedOutBook(Inventory.get(ISBN).getBook());
+    }
 
     /**
      * loads the visitors and Books from an external file
@@ -130,7 +152,7 @@ public class OwningLibrary {
      * @param ISBN    the ISBN of the book being checked out
      * @return if the visitor successfully checked out the book or not
      */
-    public Boolean visitorCheckOut(Visitor visitor, Long ISBN) {
+    public Boolean visitorCheckOut(Visitor visitor, long ISBN) {
         if (Inventory.containsKey(ISBN)) {
             //retrive the book objject that the Library entry is wrapping
             Book book = Inventory.get(ISBN).getBook();

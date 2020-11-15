@@ -1,11 +1,14 @@
 package Appl;
 
 import Requests.*;
+
+import Resposes.BuyResponse;
 import Resposes.RegisterResponse;
 import Resposes.Response;
 import main.Models.Book;
 import main.Models.OwningLibrary;
 import main.Models.TimeManager;
+import main.Models.Visitor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,7 +26,9 @@ public class LibraryServer {
 
     private static OwningLibrary library;
     private static TimeManager timeManager;
-    private static HashMap<Long, Book> allBooks = new HashMap<Long, Book>();
+
+    private static HashMap<Long, Book> bookStore;
+
 
 
     public static final String BOOKSFILE = "TextFiles/Books.txt";
@@ -36,14 +41,15 @@ public class LibraryServer {
         library = new OwningLibrary(LocalTime.of(8, 0, 0),
                 LocalTime.of(19, 0, 0));
 
+        bookStore = new HashMap<Long, Book>();
 
-      // Scanner reader = new Scanner(new File(BOOKSFILE))
+        // Scanner reader = new Scanner(new File(BOOKSFILE))
 
-       try{
-           allBooks = CSVBookParser.CreateBooks(new File(BOOKSFILE));
-       }catch (FileNotFoundException f){
-           System.out.println("Could dont Find Books file");
-       }
+        try{
+            bookStore = CSVBookParser.CreateBooks(new File(BOOKSFILE));
+        }catch (FileNotFoundException f){
+            System.out.println("Could dont Find Books file");
+        }
 
         StringBuilder commandBuilder = new StringBuilder();
         Scanner commandScanner = new Scanner(System.in);
@@ -95,9 +101,20 @@ public class LibraryServer {
                 break;
             case "register":
                 if(parameters.size() == 5) {
-                    userRequest = new RegisterRequest(library, parameters);
-                    //userRequest = new RegisterRequest(parameters.get(1), parameters.get(2), parameters.get(3),
-                    //                                   parameters.get(4), library);
+                    userRequest = new RegisterRequest(library,parameters);
+                    systemResponse = userRequest.performRequest();
+                }
+                break;
+            case "arrive":
+                if(parameters.size() == 2)
+                {
+                    userRequest = new ArriveRequest(library, parameters);
+                    systemResponse = userRequest.performRequest();
+                }
+                break;
+            case "depart":
+                if(parameters.size()==2){
+                    userRequest = new EndVisitRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
@@ -112,6 +129,16 @@ public class LibraryServer {
                     systemResponse = userRequest.performRequest();
                 }
                 break;
+            case "buy":
+                //todo this needs to become a request/response, and checking needs to happen
+               /* if(parameters.size() == 3){
+                    if(bookStore.containsKey(parameters.get(2))){
+                        library.addBook(bookStore.get(parameters.get(2)), Integer.parseInt(parameters.get(1)));
+                        systemResponse = new BuyResponse("BUY, " + parameters.get(2) + ", " + parameters.get(1));
+                    }
+                }
+                systemResponse = new BuyResponse("invalid ISBN");
+*/
             default:
                 System.out.println("Invalid command, please try again");
                 break;
@@ -149,9 +176,9 @@ public class LibraryServer {
     //test to ensure that system persistence works
 /*
     private static void testPersistence(OwningLibrary library){
-        Book book1 = new Book(123456, "Bacon", new Date(), 500, 3);
-        Book book2 = new Book(789456, "Bits", new Date(), 400, 4);
-        Book book3 = new Book(564231, "United", new Date(), 5, 1000);
+        Book book1 = new Book(123456, "Bacon", "JK Rowling", "BookyBois Inc", new Date().toString(), 500, 3);
+        Book book2 = new Book(789456, "Bits", "HP Lovecraft", "Bookinator LTD", new Date().toString(), 400, 4);
+        Book book3 = new Book(564231, "United","Jim Butcher", "The Other One inc.",  new Date().toString(),  5, 1000);
 
         library.addBook(book1,1);
         library.addBook(book2,1);
@@ -159,9 +186,9 @@ public class LibraryServer {
 
         //String firstName, String lastName, String address, int phoneNumber, int ID, ArrayList<Book> booksCheckedOut
 
-        Visitor v1 = new Visitor("Sherlock", "Holms", "221B Baker Street", 1234567891, 1);
-        Visitor v2 = new Visitor("Howard", "Lovecraft", "454 Angell Street", 999999999, 2);
-        Visitor v3 = new Visitor("Dory", "Just Dory", "P. Sherman 42 Wallaby Way", 1131131131, 3);
+        Visitor v1 = new Visitor("Sherlock", "Holms", "221B Baker Street", "1234567891", 1);
+        Visitor v2 = new Visitor("Howard", "Lovecraft", "454 Angell Street", "999999999", 2);
+        Visitor v3 = new Visitor("Dory", "Just Dory", "P. Sherman 42 Wallaby Way", "1131131131", 3);
 
         library.addVisitor(v1);
         library.addVisitor(v2);

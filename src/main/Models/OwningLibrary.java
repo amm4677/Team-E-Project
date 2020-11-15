@@ -17,7 +17,7 @@ import java.util.Map;
  * @author Joseph Saltalamacchia
  */
 
-public class OwningLibrary {
+public class OwningLibrary implements Serializable{
 
     private HashMap<Long, LibraryEntry> Inventory = new HashMap<Long, LibraryEntry>();
     private HashMap<Long, Visitor> Register = new HashMap<Long, Visitor>();
@@ -37,9 +37,20 @@ public class OwningLibrary {
         openLibrary();
     }
 
-    public void addBook(Book book, int copies) {
+    public LibraryEntry addBook(Book book, int copies) {
+
         LibraryEntry entry = new LibraryEntry(book, copies);
-        Inventory.put(book.getISBN(), entry);
+        long addedISBN = entry.getISBN();
+
+        //if the library entry already exists in the library, just increase the number of copies it has
+        if(Inventory.containsKey(addedISBN)) {
+            Inventory.get(addedISBN).buyMoreCopies(copies);
+        }
+        else {
+            Inventory.put(addedISBN, entry);
+        }
+
+        return Inventory.get(addedISBN);
     }
 
     public void addVisitor(Visitor visitor) {
@@ -155,7 +166,7 @@ public class OwningLibrary {
     public Boolean visitorCheckOut(Visitor visitor, long ISBN) {
         if (Inventory.containsKey(ISBN)) {
             //retrive the book objject that the Library entry is wrapping
-            Book book = Inventory.get(ISBN).getBook();
+            Book book = Inventory.get(ISBN).getBook(); //todo: is this line necessary?
             if (Inventory.get(ISBN).canBeCheckedOut() && visitor.addCheckedOutBook(book)) {
                 Inventory.get(ISBN).checkoutBook();
                 return true;
@@ -164,6 +175,13 @@ public class OwningLibrary {
         return false;
     }
 
+    /**
+     * a method that returns a list of visits currently saved by the library, for testing purposes
+     * @return the list of visits
+     */
+    public ArrayList<Visit> getVisits(){
+        return Visits;
+    }
 
     //=====================================================================================================================
     //==================================================Readers and Writers================================================

@@ -115,16 +115,18 @@ public class LibraryServer {
                     systemResponse = userRequest.performRequest();
                 }
                 break;
-            case "buy":
-                //todo this needs to become a request/response, and checking needs to happen
-               /* if(parameters.size() == 3){
-                    if(bookStore.containsKey(parameters.get(2))){
-                        library.addBook(bookStore.get(parameters.get(2)), Integer.parseInt(parameters.get(1)));
-                        systemResponse = new BuyResponse("BUY, " + parameters.get(2) + ", " + parameters.get(1));
-                    }
+            case "borrow":
+                if(parameters.size() == 2){
+                    userRequest = new BorrowRequest(library, parameters);
+                    systemResponse = userRequest.performRequest();
                 }
-                systemResponse = new BuyResponse("invalid ISBN");
-*/
+                break;
+            case "buy":
+                if(parameters.size() >= 3){
+                    userRequest = new BuyRequest(library, bookStore, parameters);
+                    systemResponse = userRequest.performRequest();
+                }
+            break;
             default:
                 System.out.println("Invalid command, please try again");
                 break;

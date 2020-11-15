@@ -107,8 +107,10 @@ public class LibraryServer {
                 break;
 
             case "search":
-                userRequest = new SearchRequest(allBooks.values(), parameters);
-                systemResponse = userRequest.performRequest();
+                if(parameters.size() > 2) {
+                    userRequest = new SearchRequest(allBooks.values(), parameters);
+                    systemResponse = userRequest.performRequest();
+                }
                 break;
             default:
                 System.out.println("Invalid command, please try again");

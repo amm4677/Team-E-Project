@@ -29,12 +29,12 @@ public class SearchResponse implements Response {
 
         int temp_id = 0;
         for (Book b : books) {
-            builder.append(",<nl>");
+            builder.append(",\n");
             builder.append(temp_id);
             builder.append(",");
             builder.append(b.getISBN());
             builder.append(",");
-            builder.append("\"" + b.getTitle() + "\"");
+            builder.append("\"" + b.getTitle() + "\", ");
             builder.append(b.getAuthors());
 
             temp_id++;

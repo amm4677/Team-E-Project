@@ -26,7 +26,7 @@ public class LibraryServer {
 
     private static OwningLibrary library;
     private static TimeManager timeManager;
-  
+
     private static HashMap<Long, Book> bookStore;
 
 
@@ -124,8 +124,10 @@ public class LibraryServer {
                 break;
 
             case "search":
-                userRequest = new SearchRequest(bookStore.values(), parameters);
-                systemResponse = userRequest.performRequest();
+                if(parameters.size() > 2) {
+                    userRequest = new SearchRequest(bookStore.values(), parameters);
+                    systemResponse = userRequest.performRequest();
+                }
                 break;
             case "buy":
                 //todo this needs to become a request/response, and checking needs to happen
@@ -145,7 +147,7 @@ public class LibraryServer {
         return systemResponse;
     }
 
-/*
+    /*
     private static ArrayList<String> splitCSV(String masterString) {
         ArrayList<String> arguments = new ArrayList<String>();
 

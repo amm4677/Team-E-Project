@@ -2,20 +2,22 @@ package Requests;
 
 import Resposes.RegisterResponse;
 import Resposes.Response;
-import main.Models.OwningLibrary;
+import main.Models.Libraries.LibraryBase;
 import main.Models.Visitor;
 
 import java.util.ArrayList;
 
 /**
- * Represents the "register" request, adding a visitor to the provided libray
+ * Represents the "register" request, adding a visitor to the provided libray. One of the concrete commands in our command pattern and a part of our Mediator pattern
+ *
+ * @author Joseph Saltalamacchia
  */
 public class RegisterRequest implements Request {
 
     RequestNames.RequestName Command = RequestNames.RequestName.REGISTER;
 
     //a proxy for the library that the Visitor is being added to
-    private OwningLibrary proxyLibrary;
+    private LibraryBase proxyLibrary;
 
     //a counter to increment the Visitor's id every time a new one is created, ensuring that every ID is unique
     private static Long nextVisitorID = Long.valueOf(1000000000);
@@ -25,14 +27,14 @@ public class RegisterRequest implements Request {
     private String address;
     private String phoneNumber;
 
-    /**
+    /*
      * Constructor for a new "register" Request
      *
 
      * @param library the library reference
      * @param parameters Arraylist of all of the paramaters of the request
-     */
-    public RegisterRequest(OwningLibrary library, ArrayList<String> parameters) {
+*/
+    public RegisterRequest(LibraryBase library, ArrayList<String> parameters) {
 
         //todo do actual fact checking
         if(parameters.size() == 5) {
@@ -57,7 +59,11 @@ public class RegisterRequest implements Request {
 
         //only increment the nextVisitorID when it is known that the visitor will be added
         nextVisitorID ++;
-        proxyLibrary.addVisitor(newVisitor);
-        return new RegisterResponse(newVisitor.getID());
+        boolean wasAdded = proxyLibrary.addVisitor(newVisitor);
+        if(wasAdded) {
+            return new RegisterResponse(newVisitor.getID());
+        }
+
+        return new RegisterResponse(wasAdded);
     }
 }

@@ -27,12 +27,12 @@ public class InfoResponse implements Response {
         builder.append(books.size());
 
         for (LibraryEntry e : books) {
-            builder.append(",<nl>");
+            builder.append(",\n");
             builder.append(e.getBook().getTotalCopies() - e.getCopiesCheckedOut());
             builder.append(",");
             builder.append(e.getBook().getISBN());
             builder.append(",");
-            builder.append("\"" + e.getBook().getTitle() + "\"");
+            builder.append("\"" + e.getBook().getTitle() + "\", ");
             builder.append(e.getBook().getAuthors());
         }
 

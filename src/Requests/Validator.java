@@ -2,6 +2,8 @@ package Requests;
 
 /**
  * a helper class for parsing Strings into their numeric equivalents
+ *
+ * @author Joseph Saltalamacchia
  */
 public class Validator {
 

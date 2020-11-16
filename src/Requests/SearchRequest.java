@@ -6,10 +6,10 @@ import main.Models.LibraryEntry;
 import main.Models.OwningLibrary;
 
 import java.util.*;
-
+//todo: Dylan, please comment your code
 public class SearchRequest implements Request {
-    RequestNames.RequestName Command = RequestNames.RequestName.SEARCH;
 
+    RequestNames.RequestName Command = RequestNames.RequestName.SEARCH;
 
     //a proxy for the library that the Visitor is being added to
     Collection<Book> books;

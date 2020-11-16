@@ -19,22 +19,20 @@ import java.util.Map;
 
 public class OwningLibrary implements Serializable{
 
-    private HashMap<Long, LibraryEntry> Inventory = new HashMap<Long, LibraryEntry>();
-    private HashMap<Long, Visitor> Register = new HashMap<Long, Visitor>();
-    private ArrayList<Visit> Visits = new ArrayList<Visit>();
 
-    private TimeManager time;
+   //TODO                       /*          DEPRECATED      *
+    protected HashMap<Long, LibraryEntry> Inventory = new HashMap<Long, LibraryEntry>();
+    protected HashMap<Long, Visitor> Register = new HashMap<Long, Visitor>();
+    protected ArrayList<Visit> Visits = new ArrayList<Visit>();
 
-    private LocalTime openingTime;
-    private LocalTime closingTime;
+    protected TimeManager time;
 
     /**
      * Creates a library with no books or visitors
      */
+
     public OwningLibrary(LocalTime openingTime, LocalTime closingTime) {
-        this.openingTime = openingTime;
-        this.closingTime = closingTime;
-        openLibrary();
+        //openLibrary();
     }
 
     public LibraryEntry addBook(Book book, int copies) {
@@ -75,24 +73,6 @@ public class OwningLibrary implements Serializable{
     }
 
     /**
-     * saves the visitors and Books to an external file
-     */
-    public void closeLibrary() {
-
-        writeVisitors();
-        writeBooks();
-        writeTime();
-
-
-        //Checks everyone out of the library for the day and writes a record of it
-        for (Visit v : Visits) {
-            if (v.getIsOngoingVisit()) v.endVisit(time.getDate());
-        }
-        writeVisits();
-        Visits.clear();
-    }
-
-    /**
      * Starts the visit of a registered visitor
      *
      * @param visitorID the visitor checking out the book, assuming they are not checked in
@@ -126,6 +106,7 @@ public class OwningLibrary implements Serializable{
         return null;
     }
 
+
     /**
      * /searches the library to see if it owns at least one copy of a given book
      * @param ISBN the ISBN of the book in question
@@ -150,11 +131,11 @@ public class OwningLibrary implements Serializable{
     /**
      * loads the visitors and Books from an external file
      */
-    public void openLibrary() {
+    /*public void openLibrary() {
         readVisitors();
         readBooks();
         readTime();
-    }
+    }*/
 
     /**
      * Allows a given visitor to check out a book
@@ -183,131 +164,7 @@ public class OwningLibrary implements Serializable{
         return Visits;
     }
 
-    //=====================================================================================================================
-    //==================================================Readers and Writers================================================
-    //=====================================================================================================================
-
-
-    /**
-     * A private helper method to read all of the saved Books from the file they were saved on
-     */
-    private void readBooks() {
-        try {
-            FileInputStream fBook = new FileInputStream(new File("TextFiles/BookLog.bin"));
-            ObjectInputStream oBook = new ObjectInputStream(fBook);
-
-            boolean keepReading = true;
-            try {
-                while (keepReading) {
-                    LibraryEntry book = (LibraryEntry) oBook.readObject();
-                    this.Inventory.put(book.getISBN(), book);
-                }
-            } catch (EOFException ignored) {
-            }
-
-            fBook.close();
-            oBook.close();
-
-        } catch (FileNotFoundException f) {
-            System.out.println("BookLog file not found");
-        } catch (IOException i) {
-            System.out.println("No Books In library");
-        } catch (ClassNotFoundException c) {
-            System.out.println("could not find class");
-        }
-    }
-
-
-    /**
-     * A private helper method to read all of the saved Visitors from the file they were saved on
-     */
-    private void readVisitors() {
-        try {
-            FileInputStream fVisitor = new FileInputStream(new File("TextFiles/VisitorLog.bin"));
-            ObjectInputStream oVisitor = new ObjectInputStream(fVisitor);
-
-            boolean keepReading = true;
-            try {
-                while (keepReading) {
-                    Visitor visitor = (Visitor) oVisitor.readObject();
-                    this.Register.put(visitor.getID(), visitor);
-                    // oVisitor = new ObjectInputStream(fVisitor);
-                }
-            } catch (EOFException ignored) {
-            }
-
-            fVisitor.close();
-            oVisitor.close();
-
-        } catch (FileNotFoundException f) {
-            System.out.println("VisitorLog file not found");
-        } catch (IOException i) {
-            System.out.println("No Visitors registered in library");
-        } catch (ClassNotFoundException c) {
-            System.out.println("could not find class");
-        }
-    }
-
-    /**
-     * private helper method to print Visitors out to a file
-     */
-    private void writeBooks() {
-        try {
-            //create a writer for the Books
-            FileOutputStream fBook = new FileOutputStream(new File("TextFiles/BookLog.bin"));
-            ObjectOutputStream oBook = new ObjectOutputStream(fBook);
-
-            Iterator BookIterator = Inventory.entrySet().iterator();
-
-            //print each visitor to the file
-            while (BookIterator.hasNext()) {
-                Map.Entry pair = (Map.Entry) BookIterator.next();
-                LibraryEntry b = (LibraryEntry) pair.getValue();
-
-                oBook.writeObject(b);
-                System.out.println(b.toString());
-                BookIterator.remove();
-            }
-
-            fBook.close();
-            oBook.close();
-
-        } catch (FileNotFoundException f) {
-            System.out.println("Book File Not Found");
-        } catch (IOException i) {
-            System.out.println("Error initializing stream");
-        }
-    }
-
-    /**
-     * private helper method to print Visitors out to a file
-     */
-    private void writeVisitors() {
-        try {
-            //create a writer for the visitors
-            FileOutputStream fVisitor = new FileOutputStream(new File("TextFiles/VisitorLog.bin"));
-            ObjectOutputStream oVisitor = new ObjectOutputStream(fVisitor);
-
-            Iterator VisitorIterator = Register.entrySet().iterator();
-
-            //print each visitor to the file
-            while (VisitorIterator.hasNext()) {
-                Map.Entry pair = (Map.Entry) VisitorIterator.next();
-                Visitor v = (Visitor) pair.getValue();
-
-                oVisitor.writeObject(v);
-
-                System.out.println(v.toString());
-                VisitorIterator.remove();
-            }
-
-        } catch (FileNotFoundException f) {
-            System.out.println("Visitor File Not Found");
-        } catch (IOException i) {
-            System.out.println("Error initializing stream");
-        }
-    }
-
+/*
     private void readTime() {
         try {
             FileInputStream fTime = new FileInputStream(new File("TextFiles/TimeLog.bin"));
@@ -318,10 +175,6 @@ public class OwningLibrary implements Serializable{
                 time = (TimeManager) oTime.readObject();
             } catch (EOFException ignored) {
             }
-
-            fTime.close();
-            oTime.close();
-
         } catch (FileNotFoundException f) {
             //if no file, create a new TimeManager
             time = new TimeManager();
@@ -331,7 +184,7 @@ public class OwningLibrary implements Serializable{
             System.out.println("could not find class");
         }
     }
-
+*//*
     private void writeTime() {
         try {
             //create a writer for the visitors
@@ -346,8 +199,8 @@ public class OwningLibrary implements Serializable{
         } catch (IOException i) {
             System.out.println("Error initializing stream");
         }
-    }
-
+    }*/
+/*
     private void writeVisits() {
         try {
             //create a writer for the daily visits
@@ -363,7 +216,8 @@ public class OwningLibrary implements Serializable{
         } catch (IOException i) {
             System.out.println("Error initializing stream");
         }
-    }
+    }*/
+  
 /*
     private void writeReport(int month, int year)
     {

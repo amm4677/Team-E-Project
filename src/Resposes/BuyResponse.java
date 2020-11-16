@@ -2,6 +2,11 @@ package Resposes;
 
 import Requests.RequestNames;
 
+/**
+ * represents the response the request to buy a book for the library. One of the concrete commands in our command pattern and a part of our Mediator pattern
+ *
+ * @author Joseph Saltalamacchia
+ */
 public class BuyResponse implements Response{
 
     private static final RequestNames.RequestName COMMAND = RequestNames.RequestName.BUY;

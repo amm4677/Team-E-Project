@@ -4,6 +4,7 @@ import Resposes.InfoResponse;
 import Resposes.InvalidInfoResponse;
 import Resposes.Response;
 import main.Models.Book;
+import main.Models.Libraries.LibraryBase;
 import main.Models.LibraryEntry;
 import main.Models.OwningLibrary;
 
@@ -12,12 +13,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+//todo: Dylan, please comment your code
 public class InfoRequest implements Request {
     RequestNames.RequestName Command = RequestNames.RequestName.INFO;
 
 
     //a proxy for the library that the Visitor is being added to
-    private OwningLibrary proxyLibrary;
+    private LibraryBase proxyLibrary;
 
     private String title = "*";
     private String authors = "*";
@@ -26,7 +28,7 @@ public class InfoRequest implements Request {
     private String sortOrder = "title";
 
 
-    public InfoRequest(OwningLibrary library, ArrayList<String> parameters) {
+    public InfoRequest(LibraryBase library, ArrayList<String> parameters) {
         switch(parameters.size()) {
             default:
                 break;

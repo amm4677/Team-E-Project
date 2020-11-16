@@ -3,23 +3,29 @@ package Requests;
 import Resposes.BuyResponse;
 import Resposes.Response;
 import main.Models.Book;
+import main.Models.Libraries.LibraryBase;
 import main.Models.LibraryEntry;
 import main.Models.OwningLibrary;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * represents the request to purchase a book from the bookstore for the library. One of the concrete commands in our command pattern and a part of our Mediator pattern
+ *
+ * @author Joseph Saltalamacchia
+ */
 public class BuyRequest implements Request {
 
     private static final RequestNames.RequestName COMMAND = RequestNames.RequestName.BUY;
 
-    OwningLibrary libraryProxy;
+    LibraryBase libraryProxy;
     HashMap<Long, Book> bookstoreProxy;
     int quantity;
     ArrayList<Long> ids;
     StringBuilder booksAdded;
 
-    public BuyRequest(OwningLibrary library,  HashMap<Long, Book> bookstore, ArrayList<String> Parameters) {
+    public BuyRequest(LibraryBase library,  HashMap<Long, Book> bookstore, ArrayList<String> Parameters) {
         this.libraryProxy = library;
         this.bookstoreProxy = bookstore;
         this.ids = new ArrayList<>();

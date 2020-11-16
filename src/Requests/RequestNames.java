@@ -1,5 +1,8 @@
 package Requests;
 
+/**
+ * simple enumerator to standardize all of the command names
+ */
 public class RequestNames {
     public enum RequestName{
         PARTIAL_REQUEST,

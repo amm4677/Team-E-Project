@@ -3,6 +3,11 @@ package Resposes;
 import Requests.RequestNames;
 import main.Models.Visit;
 
+/**
+ * represents the response the request to begin a visit to the library. One of the concrete commands in our command pattern and a part of our Mediator pattern
+ *
+ * @author Joseph Saltalamacchia
+ */
 public class ArriveResponse implements Response {
 
     private static final RequestNames.RequestName COMMAND = RequestNames.RequestName.ARRIVE;

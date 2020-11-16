@@ -2,15 +2,22 @@ package Requests;
 
 import Resposes.BorrowResponse;
 import Resposes.Response;
+import main.Models.Libraries.LibraryBase;
 import main.Models.OwningLibrary;
 
 import java.util.ArrayList;
+
+/**
+ * represents the request to borrow a book. One of the concrete commands in our command pattern and a part of our Mediator pattern
+ *
+ * @author Joseph Saltalamacchia
+ */
 
 public class BorrowRequest implements Request {
 
     private static final RequestNames.RequestName COMMAND = RequestNames.RequestName.BORROW;
 
-    OwningLibrary library;
+    LibraryBase library;
     private long ISBN;
     private long visitorID;
     private String invalidID;
@@ -22,7 +29,7 @@ public class BorrowRequest implements Request {
      * @param library the library the books being borrowed are coming from
      * @param parameters
      */
-    public BorrowRequest(OwningLibrary library, ArrayList<String> parameters){
+    public BorrowRequest(LibraryBase library, ArrayList<String> parameters){
 
         if(parameters.size() == 3){
 

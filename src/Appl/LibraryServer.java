@@ -1,28 +1,41 @@
 package Appl;
 
 import Requests.*;
+
 import Resposes.RegisterResponse;
 import Resposes.Response;
+
+
 import main.Models.Book;
-import main.Models.OwningLibrary;
+import main.Models.Libraries.ClosedLibrary;
+import main.Models.Libraries.LibraryBase;
+import main.Models.Libraries.LibrarySaveAndRead;
+import main.Models.Libraries.OpenLibrary;
 import main.Models.TimeManager;
+import main.Models.*;
 import View.MyFrame;
 
+import java.io.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.Scanner;
 
 /**
+ * The server and main point of interaction for the user. Maintains the Library model and monitors the time.
+ * Acts as the controler for the system
  *
+ * @author Joseph Saltalamacchia
  */
 public class LibraryServer {
 
-    private static OwningLibrary library;
-    private static TimeManager timeManager;
-
     private static HashMap<Long, Book> bookStore;
+    private static LibraryBase library;
 
+    private static TimeManager timeManager;
+    private static final LocalTime OPENING_TIME = LocalTime.of(8, 0, 0);
+    private static final LocalTime CLOSING_TIME = LocalTime.of(19, 0, 0);
 
     public static final String BOOKSFILE = "TextFiles/Books.txt";
 
@@ -30,18 +43,22 @@ public class LibraryServer {
 
     public static void main(String[] args) {
 
+        timeManager = new TimeManager();
+        LibraryServer.readTime();
+        library = openLibrary();
+
+        //sets up library to be open or closed depending on time
+        checkLibraryStatus();
         //opens the library
-        library = new OwningLibrary(LocalTime.of(8, 0, 0),
-                LocalTime.of(19, 0, 0));
 
         bookStore = new HashMap<Long, Book>();
 
         // Scanner reader = new Scanner(new File(BOOKSFILE))
 
-        try {
+        try{
             bookStore = CSVBookParser.CreateBooks(new File(BOOKSFILE));
-        } catch (FileNotFoundException f) {
-            System.out.println("Could Not Find Books File");
+        }catch (FileNotFoundException f){
+            System.out.println("Could dont Find Books file");
         }
 
         MyFrame frame = new MyFrame();
@@ -49,19 +66,33 @@ public class LibraryServer {
 
         //Save Library
         //End Application
-        library.closeLibrary();
+        closeLibrary(library);
 
         //used to test that the system worked
-        //testPersistence(library);*/
+        //testPersistence(library);
+
     }
 
+    private static LibraryBase openLibrary() {
+        return LibrarySaveAndRead.openLibrary();
+    }
+
+    private static boolean closeLibrary(LibraryBase library){
+        return LibrarySaveAndRead.saveLibrary(library);
+    }
 
    public static Response getSystemResponse(ArrayList<String> parameters) {
         Request userRequest;
         //todo: Need to change this to an actual default state
         Response systemResponse = new RegisterResponse();
 
-        switch (parameters.get(0).toLowerCase().trim()) {
+        //ensures that commands are not case sensitive
+        String command = parameters.get(0).toLowerCase().trim();
+
+        switch(command) {
+            case "quit":
+                isRunning = false;
+                break;
             case "register":
                 if (parameters.size() == 5) {
                     userRequest = new RegisterRequest(library, parameters);
@@ -69,74 +100,122 @@ public class LibraryServer {
                 }
                 break;
             case "arrive":
-                if (parameters.size() == 2) {
+                if(parameters.size() == 2)
+                {
                     userRequest = new ArriveRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
             case "depart":
-                if (parameters.size() == 2) {
+                if(parameters.size()==2){
                     userRequest = new EndVisitRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
             case "info":
+                //searching the library's inventory
                 userRequest = new InfoRequest(library, parameters);
                 systemResponse = userRequest.performRequest();
                 break;
 
             case "search":
-                if (parameters.size() > 2) {
+                //searching the bookstore's inventory
+                if(parameters.size() > 2) {
                     userRequest = new SearchRequest(bookStore.values(), parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
-                case "borrow":
-                        if (parameters.size() == 2) {
-                            userRequest = new BorrowRequest(library, parameters);
-                            systemResponse = userRequest.performRequest();
-                        }
-                        break;
-                    case "buy":
-                        if (parameters.size() >= 3) {
-                            userRequest = new BuyRequest(library, bookStore, parameters);
-                            systemResponse = userRequest.performRequest();
-                        }
-                        break;
-                    default:
-                        System.out.println("Invalid command, please try again");
-                        break;
-                }//end switch
+            case "borrow":
+                if(parameters.size() == 2){
+                    userRequest = new BorrowRequest(library, parameters);
+                    systemResponse = userRequest.performRequest();
+                }
+                break;
+            case "buy":
+                if(parameters.size() >= 3){
+                    userRequest = new BuyRequest(library, bookStore, parameters);
+                    systemResponse = userRequest.performRequest();
+                }
+            break;
+            case "datetime":
+                if(parameters.size() == 1){
+                    userRequest = new DateTimeRequest(library);
+                    systemResponse = userRequest.performRequest();
+                }
+                break;
+            default:
+                System.out.println("Invalid command, please try again");
+                break;
+        }//end switch
 
-                return systemResponse;
+        return systemResponse;
+    }
+
+    private static void readTime() {
+        try {
+            FileInputStream fTime = new FileInputStream(new File("TextFiles/TimeLog.bin"));
+            ObjectInputStream oTime = new ObjectInputStream(fTime);
+
+            try {
+                //Use file to create TimeManager
+                String[] timeInfo = ((String) oTime.readObject()).split(" ");
+                timeManager = TimeManager.createInstance(timeInfo[0], timeInfo[1]);
+            } catch (EOFException ignored) {
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println(e);
+            }
+
+            fTime.close();
+            oTime.close();
+
+        } catch (FileNotFoundException f) {
+            //if no file, create a new TimeManager
+            timeManager = TimeManager.getInstance();
+        } catch (IOException i) {
+            System.out.println("Error initializing stream");
+        } catch (ClassNotFoundException c) {
+            System.out.println("could not find class");
         }
     }
 
-    /*
-    private static ArrayList<String> splitCSV(String masterString) {
-        ArrayList<String> arguments = new ArrayList<String>();
+    private static void writeTime() {
+        try {
+            //create a writer for the visitors
+            FileOutputStream fTime = new FileOutputStream(new File("TextFiles/TimeLog.bin"));
+            ObjectOutputStream oTime = new ObjectOutputStream(fTime);
 
-        //This could include matches with curly brackets within curly brackets. Filter them out and add them
-        Pattern curlyBrackets = Pattern.compile("\\{(.*?)},");
-        Matcher matcher = curlyBrackets.matcher(masterString);
-        while(matcher.find()) {
-            String s = matcher.group();
-            String substring = s.substring(1, s.length() - 3);
+            //writes the time object into the file
+            oTime.writeObject(timeManager.getFormattedDate() + " " + timeManager.getFormattedTime());
 
-            if(substring.contains("{") || substring.contains("}")) continue;
-
-            arguments.add(substring);
-            masterString = masterString.replace(s, "");
+        } catch (FileNotFoundException f) {
+            System.out.println("Time File Not Found");
+        } catch (IOException i) {
+            System.out.println("Error initializing stream");
         }
-
-        //Add remaining arguments
-        for(String s : masterString.split(",")) {
-            arguments.add(s);
-        }
-
-        return arguments;
     }
-*/
+
+    private static void checkLibraryStatus() {
+
+        int openCompare = timeManager.getLocalTime().compareTo(OPENING_TIME);
+        int closeCompare = timeManager.getLocalTime().compareTo(CLOSING_TIME);
+
+        //can't have a null library, make closed with a status of default so it can be overridden by one of the two cases.
+        if(library == null)
+        {
+            library = new ClosedLibrary();
+            library.libraryStatus = LibraryBase.LibraryStatus.Default;
+        }
+
+        //if within opening and closing hours and library is not open, make an OpenLibrary()
+        if(openCompare >= 0 && closeCompare < 0 && library.libraryStatus != LibraryBase.LibraryStatus.Open){
+            library = new OpenLibrary(library);
+        }
+        //else if the library is outside the bounds of opening and closing time and is not closed, make a ClosedLibrary()
+        else if(library.libraryStatus != LibraryBase.LibraryStatus.Closed){
+            library = new ClosedLibrary(library);
+        }
+    }
+
 
     //test to ensure that system persistence works
 /*

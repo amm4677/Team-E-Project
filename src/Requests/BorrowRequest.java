@@ -17,7 +17,7 @@ public class BorrowRequest implements Request {
 
     private static final RequestNames.RequestName COMMAND = RequestNames.RequestName.BORROW;
 
-    LibraryBase library;
+    LibraryBase libraryProxy;
     private long ISBN;
     private long visitorID;
     private String invalidID;
@@ -35,7 +35,7 @@ public class BorrowRequest implements Request {
 
             String stringID = parameters.get(1);
 
-            this.library = library;
+            this.libraryProxy = library;
             if(Validator.validateAndParseLong(stringID) == -1){
                 invalidID = stringID;
             }
@@ -47,20 +47,20 @@ public class BorrowRequest implements Request {
     @Override
     public Response performRequest() {
 
-        if(this.visitorID == -1 || !(library.getRegister().containsKey(visitorID))){
+        if(this.visitorID == -1 || !(libraryProxy.getRegister().containsKey(visitorID))){
             return new BorrowResponse(invalidID);
         }
-        if(!library.containsBook(ISBN)){
+        if(!libraryProxy.containsBook(ISBN)){
             return new BorrowResponse(ISBN);
         }
-        if(!(library.getRegister().get(visitorID).canCheckOutBook())){
+        if(!(libraryProxy.getRegister().get(visitorID).canCheckOutBook())){
             return new BorrowResponse();
         }
-        if(!(library.getRegister().get(visitorID).owesFine())){
-            return new BorrowResponse(library.getRegister().get(visitorID).getTotalFines());
+        if(!(libraryProxy.getRegister().get(visitorID).owesFine())){
+            return new BorrowResponse(libraryProxy.getRegister().get(visitorID).getTotalFines());
         }
 
-        library.borrowBook(visitorID, ISBN);
+        libraryProxy.borrowBook(visitorID, ISBN);
         return new BorrowResponse(123);
 
     }

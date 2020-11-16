@@ -41,6 +41,11 @@ public abstract class LibraryBase implements Serializable {
         return time.toString();
     }
 
+    public void advanceTime(int days, int hours){
+        time.addDays(days);
+        time.addHours(hours);
+    }
+
     public HashMap<Long, Visitor> getRegister() {
         return Register;
     }

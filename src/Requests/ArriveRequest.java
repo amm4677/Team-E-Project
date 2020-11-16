@@ -18,13 +18,13 @@ public class ArriveRequest implements Request {
     private static final RequestNames.RequestName COMMAND = RequestNames.RequestName.ARRIVE;
     Long visitorID;
     String invalidID;
-    LibraryBase library;
+    LibraryBase libraryProxy;
 
     public ArriveRequest(LibraryBase library, ArrayList<String> parameters){
 
         String stringID = parameters.get(1);
 
-        this.library = library;
+        this.libraryProxy = library;
 
         visitorID = Validator.validateAndParseLong(stringID);
 
@@ -43,7 +43,7 @@ public class ArriveRequest implements Request {
             return new ArriveResponse(invalidID);
         }
 
-        Visit tempVisit = library.startVisit(visitorID);
+        Visit tempVisit = libraryProxy.startVisit(visitorID);
 
         //if the visitor is already visiting, inform the user that it's a duplicate
         if(tempVisit == null){

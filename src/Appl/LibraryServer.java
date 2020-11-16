@@ -167,6 +167,12 @@ public class LibraryServer {
                     systemResponse = userRequest.performRequest();
                 }
                 break;
+            case "advance":
+                if(parameters.size() == 3){
+                    userRequest = new AdvanceTimeRequest(library, parameters);
+                    systemResponse = userRequest.performRequest();
+                }
+                break;
             default:
                 System.out.println("Invalid command, please try again");
                 break;

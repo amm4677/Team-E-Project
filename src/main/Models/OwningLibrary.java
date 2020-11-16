@@ -20,9 +20,7 @@ import java.util.Map;
 public class OwningLibrary implements Serializable{
 
 
-   //TODO                       /*          DEPRECATED      */
-public class OwningLibrary {
-
+   //TODO                       /*          DEPRECATED      *
     protected HashMap<Long, LibraryEntry> Inventory = new HashMap<Long, LibraryEntry>();
     protected HashMap<Long, Visitor> Register = new HashMap<Long, Visitor>();
     protected ArrayList<Visit> Visits = new ArrayList<Visit>();
@@ -34,8 +32,6 @@ public class OwningLibrary {
      */
 
     public OwningLibrary(LocalTime openingTime, LocalTime closingTime) {
-        this.openingTime = openingTime;
-        this.closingTime = closingTime;
         //openLibrary();
     }
 

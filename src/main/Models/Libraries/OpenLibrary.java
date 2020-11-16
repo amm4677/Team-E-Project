@@ -6,21 +6,32 @@ import main.Models.LibraryEntry;
 import main.Models.Visit;
 import main.Models.Visitor;
 
-public class OpenLibrary extends LibraryBase {
+import java.io.Serializable;
+
+/**
+ * Acts as the open state for the library. This is one of the concrete states in the state pattern for the library
+ *
+ * @author Anthony Ferrioli
+ * @author Joseph Saltalamacchia
+ */
+public class OpenLibrary extends LibraryBase implements Serializable {
 
     public OpenLibrary() {
         super();
 
-        readVisitors();
-        readBooks();
-
         libraryStatus = LibraryStatus.Open;
     }
 
-    @Override
-    public void addBook(Book book, int copies) {
-        LibraryEntry entry = new LibraryEntry(book, copies);
-        Inventory.put(book.getISBN(), entry);
+    /**
+     * Creates a new library that contains all of the information of the old library
+     * @param oldLibrary the library being copied
+     */
+    public OpenLibrary(LibraryBase oldLibrary){
+        super();
+        libraryStatus = LibraryStatus.Open;
+        this.Inventory = oldLibrary.getInventory();
+        this.Register = oldLibrary.getRegister();
+        this.Visits = oldLibrary.getVisits();
     }
 
     @Override
@@ -36,7 +47,7 @@ public class OpenLibrary extends LibraryBase {
      * @return the Visit object representing the status of their visit
      */
     @Override
-    public Visit startVisit(int visitorID) {
+    public Visit startVisit(Long visitorID) {
         //Checks to make sure they aren't already checked in (visitors can check in multiple times per day)
         for (Visit v : Visits) {
             if (v.getVisitorID() == visitorID && v.getIsOngoingVisit()) return v;
@@ -54,13 +65,15 @@ public class OpenLibrary extends LibraryBase {
      * @param visitorID the visitor visiting the library
      */
     @Override
-    public void endVisit(int visitorID) {
+    public Visit endVisit(Long visitorID) {
         for (Visit v : Visits) {
             if (v.getVisitorID() == visitorID && v.getIsOngoingVisit()) {
                 v.endVisit(time.getDate());
-                return;
+                return v;
             }
         }
+
+        return null;
     }
 
     /**
@@ -82,4 +95,17 @@ public class OpenLibrary extends LibraryBase {
         }
         return false;
     }
+
+    @Override
+    /**
+     * Allows a visitor to borrow a book from the library
+     * @param VisitorID the ID of the visitor attempting to check out the book
+     * @param ISBN the ISBN of the book attempting to be checked out
+     * @return true if the book was sussessfully checked out, false otherwise
+     */
+    public boolean borrowBook(Long VisitorID, Long ISBN) {
+        Inventory.get(ISBN).checkoutBook();
+        return Register.get(VisitorID).addCheckedOutBook(Inventory.get(ISBN).getBook());
+    }
+
 }

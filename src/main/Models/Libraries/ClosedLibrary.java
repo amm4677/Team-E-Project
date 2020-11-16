@@ -5,7 +5,14 @@ import main.Models.Libraries.LibraryBase;
 import main.Models.Visit;
 import main.Models.Visitor;
 
-public class ClosedLibrary extends LibraryBase {
+import java.io.Serializable;
+
+/**
+ * Represents the closed state of the library
+ * @author Anthony Ferrioli
+ * @author Joseph Saltalamacchia
+ */
+public class ClosedLibrary extends LibraryBase implements Serializable {
 
     public ClosedLibrary() {
         super();
@@ -13,14 +20,16 @@ public class ClosedLibrary extends LibraryBase {
         libraryStatus = LibraryStatus.Closed;
     }
 
-    @Override
-    public void closeLibrary() {
-        System.out.println("Library closed");
-    }
-
-    @Override
-    public void addBook(Book book, int copies) {
-        System.out.println("Cannot add " + copies + " of " + book + " because the library is currently closed");
+    /**
+     * Creates a new library that contains all of the information of the old library
+     * @param oldLibrary the library being copied
+     */
+    public ClosedLibrary(LibraryBase oldLibrary){
+        super();
+        libraryStatus = LibraryStatus.Closed;
+        this.Inventory = oldLibrary.getInventory();
+        this.Register = oldLibrary.getRegister();
+        this.Visits = oldLibrary.getVisits();
     }
 
     @Override
@@ -29,21 +38,28 @@ public class ClosedLibrary extends LibraryBase {
     }
 
     @Override
-    public Visit startVisit(int visitorID) {
+    public Visit startVisit(Long visitorID) {
         System.out.println("Visits cannot be started while the library is closed");
 
         return null;
     }
 
     @Override
-    public void endVisit(int visitorID) {
+    public Visit endVisit(Long visitorID) {
         System.out.println("There are no visits to end because the library is currently closed");
+        return null;
     }
 
     @Override
     public boolean visitorCheckOut(Visitor visitor, Long ISBN) {
         System.out.println("Visitors cannot check out books because the library is currently closed");
 
+        return false;
+    }
+
+    @Override
+    public boolean borrowBook(Long VisitorID, Long ISBN) {
+        System.out.println("cannot check out a book while the library is closed");
         return false;
     }
 }

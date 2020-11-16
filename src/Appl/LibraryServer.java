@@ -2,7 +2,6 @@ package Appl;
 
 import Requests.*;
 
-import Resposes.BuyResponse;
 import Resposes.RegisterResponse;
 import Resposes.Response;
 
@@ -10,6 +9,7 @@ import Resposes.Response;
 import main.Models.Book;
 import main.Models.Libraries.ClosedLibrary;
 import main.Models.Libraries.LibraryBase;
+import main.Models.Libraries.LibrarySaveAndRead;
 import main.Models.Libraries.OpenLibrary;
 import main.Models.TimeManager;
 import main.Models.*;
@@ -20,7 +20,10 @@ import java.util.*;
 import java.util.Scanner;
 
 /**
+ * The server and main point of interaction for the user. Maintains the Library model and monitors the time.
+ * Acts as the controler for the system
  *
+ * @author Joseph Saltalamacchia
  */
 public class LibraryServer {
 
@@ -40,17 +43,12 @@ public class LibraryServer {
 
 
         LibraryServer.readTime();
+        library = openLibrary();
 
         //sets up library to be open or closed depending on time
         checkLibraryStatus();
         //opens the library
-        library = openLibrary();
 
-        //if a library does not already exist, create a new one
-        if (library == null) {
-            library = new OwningLibrary(LocalTime.of(8, 0, 0),
-                    LocalTime.of(19, 0, 0));
-        }
         bookStore = new HashMap<Long, Book>();
 
         // Scanner reader = new Scanner(new File(BOOKSFILE))
@@ -99,11 +97,11 @@ public class LibraryServer {
 
     }
 
-    private static OwningLibrary openLibrary() {
+    private static LibraryBase openLibrary() {
         return LibrarySaveAndRead.openLibrary();
     }
 
-    private static boolean closeLibrary(OwningLibrary library){
+    private static boolean closeLibrary(LibraryBase library){
         return LibrarySaveAndRead.saveLibrary(library);
     }
 
@@ -227,11 +225,12 @@ public class LibraryServer {
         }
 
         //if within opening and closing hours and library is not open, make an OpenLibrary()
-        if(openCompare >= 0 && closeCompare < 0 && library.libraryStatus != LibraryBase.LibraryStatus.Open) library = new OpenLibrary();
+        if(openCompare >= 0 && closeCompare < 0 && library.libraryStatus != LibraryBase.LibraryStatus.Open){
+            library = new OpenLibrary(library);
+        }
         //else if the library is outside the bounds of opening and closing time and is not closed, make a ClosedLibrary()
         else if(library.libraryStatus != LibraryBase.LibraryStatus.Closed){
-            library.closeLibrary();
-            library = new ClosedLibrary();
+            library = new ClosedLibrary(library);
         }
     }
 

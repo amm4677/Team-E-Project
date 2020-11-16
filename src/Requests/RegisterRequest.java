@@ -8,7 +8,9 @@ import main.Models.Visitor;
 import java.util.ArrayList;
 
 /**
- * Represents the "register" request, adding a visitor to the provided libray
+ * Represents the "register" request, adding a visitor to the provided libray. One of the concrete commands in our command pattern and a part of our Mediator pattern
+ *
+ * @author Joseph Saltalamacchia
  */
 public class RegisterRequest implements Request {
 

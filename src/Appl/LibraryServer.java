@@ -55,9 +55,9 @@ public class LibraryServer {
 
         // Scanner reader = new Scanner(new File(BOOKSFILE))
 
-        try{
+        try {
             bookStore = CSVBookParser.CreateBooks(new File(BOOKSFILE));
-        }catch (FileNotFoundException f){
+        } catch (FileNotFoundException f) {
             System.out.println("Could dont Find Books file");
         }
 
@@ -77,11 +77,11 @@ public class LibraryServer {
         return LibrarySaveAndRead.openLibrary();
     }
 
-    private static boolean closeLibrary(LibraryBase library){
+    private static boolean closeLibrary(LibraryBase library) {
         return LibrarySaveAndRead.saveLibrary(library);
     }
 
-   public static Response getSystemResponse(ArrayList<String> parameters) {
+    public static Response getSystemResponse(ArrayList<String> parameters) {
         Request userRequest;
         //todo: Need to change this to an actual default state
         Response systemResponse = new RegisterResponse();
@@ -89,7 +89,7 @@ public class LibraryServer {
         //ensures that commands are not case sensitive
         String command = parameters.get(0).toLowerCase().trim();
 
-        switch(command) {
+        switch (command) {
             case "quit":
                 isRunning = false;
                 break;
@@ -100,14 +100,13 @@ public class LibraryServer {
                 }
                 break;
             case "arrive":
-                if(parameters.size() == 2)
-                {
+                if (parameters.size() == 2) {
                     userRequest = new ArriveRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
             case "depart":
-                if(parameters.size()==2){
+                if (parameters.size() == 2) {
                     userRequest = new EndVisitRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
@@ -120,31 +119,31 @@ public class LibraryServer {
 
             case "search":
                 //searching the bookstore's inventory
-                if(parameters.size() > 2) {
+                if (parameters.size() > 2) {
                     userRequest = new SearchRequest(bookStore.values(), parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
             case "borrow":
-                if(parameters.size() == 2){
+                if (parameters.size() == 2) {
                     userRequest = new BorrowRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
             case "buy":
-                if(parameters.size() >= 3){
+                if (parameters.size() >= 3) {
                     userRequest = new BuyRequest(library, bookStore, parameters);
                     systemResponse = userRequest.performRequest();
                 }
-            break;
+                break;
             case "datetime":
-                if(parameters.size() == 1){
+                if (parameters.size() == 1) {
                     userRequest = new DateTimeRequest(library);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
             case "advance":
-                if(parameters.size() == 3){
+                if (parameters.size() == 3) {
                     userRequest = new AdvanceTimeRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
@@ -206,21 +205,21 @@ public class LibraryServer {
         int closeCompare = timeManager.getLocalTime().compareTo(CLOSING_TIME);
 
         //can't have a null library, make closed with a status of default so it can be overridden by one of the two cases.
-        if(library == null)
-        {
+        if (library == null) {
             library = new ClosedLibrary();
             library.libraryStatus = LibraryBase.LibraryStatus.Default;
         }
 
         //if within opening and closing hours and library is not open, make an OpenLibrary()
-        if(openCompare >= 0 && closeCompare < 0 && library.libraryStatus != LibraryBase.LibraryStatus.Open){
+        if (openCompare >= 0 && closeCompare < 0 && library.libraryStatus != LibraryBase.LibraryStatus.Open) {
             library = new OpenLibrary(library);
         }
         //else if the library is outside the bounds of opening and closing time and is not closed, make a ClosedLibrary()
-        else if(library.libraryStatus != LibraryBase.LibraryStatus.Closed){
+        else if (library.libraryStatus != LibraryBase.LibraryStatus.Closed) {
             library = new ClosedLibrary(library);
         }
     }
+}
 
 
     //test to ensure that system persistence works

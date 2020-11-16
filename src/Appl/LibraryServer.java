@@ -43,7 +43,7 @@ public class LibraryServer {
 
     public static void main(String[] args) {
 
-        timeManager = new TimeManager();
+        timeManager = TimeManager.getInstance();
         LibraryServer.readTime();
         library = openLibrary();
 
@@ -140,6 +140,12 @@ public class LibraryServer {
             case "datetime":
                 if(parameters.size() == 1){
                     userRequest = new DateTimeRequest(library);
+                    systemResponse = userRequest.performRequest();
+                }
+                break;
+            case "advance":
+                if(parameters.size() == 3){
+                    userRequest = new AdvanceTimeRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;

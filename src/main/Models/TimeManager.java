@@ -44,7 +44,7 @@ public class TimeManager implements Serializable {
     /*
         The default constructor for the class
      */
-    public TimeManager()
+    private TimeManager()
     {
         calendar = Calendar.getInstance();
 

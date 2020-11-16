@@ -34,7 +34,7 @@ public class OwningLibrary implements Serializable{
     public OwningLibrary(LocalTime openingTime, LocalTime closingTime) {
         this.openingTime = openingTime;
         this.closingTime = closingTime;
-        openLibrary();
+        //openLibrary();
     }
 
     public LibraryEntry addBook(Book book, int copies) {
@@ -77,7 +77,7 @@ public class OwningLibrary implements Serializable{
     /**
      * saves the visitors and Books to an external file
      */
-    public void closeLibrary() {
+   /* public void closeLibrary() {
 
         writeVisitors();
         writeBooks();
@@ -90,7 +90,7 @@ public class OwningLibrary implements Serializable{
         }
         writeVisits();
         Visits.clear();
-    }
+    }*/
 
     /**
      * Starts the visit of a registered visitor
@@ -150,11 +150,11 @@ public class OwningLibrary implements Serializable{
     /**
      * loads the visitors and Books from an external file
      */
-    public void openLibrary() {
+    /*public void openLibrary() {
         readVisitors();
         readBooks();
         readTime();
-    }
+    }*/
 
     /**
      * Allows a given visitor to check out a book
@@ -190,7 +190,7 @@ public class OwningLibrary implements Serializable{
 
     /**
      * A private helper method to read all of the saved Books from the file they were saved on
-     */
+     *//*
     private void readBooks() {
         try {
             FileInputStream fBook = new FileInputStream(new File("TextFiles/BookLog.bin"));
@@ -216,11 +216,11 @@ public class OwningLibrary implements Serializable{
             System.out.println("could not find class");
         }
     }
-
+*/
 
     /**
      * A private helper method to read all of the saved Visitors from the file they were saved on
-     */
+     *//*
     private void readVisitors() {
         try {
             FileInputStream fVisitor = new FileInputStream(new File("TextFiles/VisitorLog.bin"));
@@ -247,10 +247,10 @@ public class OwningLibrary implements Serializable{
             System.out.println("could not find class");
         }
     }
-
+*/
     /**
      * private helper method to print Visitors out to a file
-     */
+     *//*
     private void writeBooks() {
         try {
             //create a writer for the Books
@@ -277,11 +277,11 @@ public class OwningLibrary implements Serializable{
         } catch (IOException i) {
             System.out.println("Error initializing stream");
         }
-    }
+    }*/
 
     /**
      * private helper method to print Visitors out to a file
-     */
+     *//*
     private void writeVisitors() {
         try {
             //create a writer for the visitors
@@ -306,8 +306,8 @@ public class OwningLibrary implements Serializable{
         } catch (IOException i) {
             System.out.println("Error initializing stream");
         }
-    }
-
+    }*/
+/*
     private void readTime() {
         try {
             FileInputStream fTime = new FileInputStream(new File("TextFiles/TimeLog.bin"));
@@ -331,7 +331,7 @@ public class OwningLibrary implements Serializable{
             System.out.println("could not find class");
         }
     }
-
+*//*
     private void writeTime() {
         try {
             //create a writer for the visitors
@@ -346,8 +346,8 @@ public class OwningLibrary implements Serializable{
         } catch (IOException i) {
             System.out.println("Error initializing stream");
         }
-    }
-
+    }*/
+/*
     private void writeVisits() {
         try {
             //create a writer for the daily visits
@@ -363,7 +363,7 @@ public class OwningLibrary implements Serializable{
         } catch (IOException i) {
             System.out.println("Error initializing stream");
         }
-    }
+    }*/
 /*
     private void writeReport(int month, int year)
     {

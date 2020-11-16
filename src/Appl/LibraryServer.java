@@ -13,8 +13,11 @@ import main.Models.Libraries.LibrarySaveAndRead;
 import main.Models.Libraries.OpenLibrary;
 import main.Models.TimeManager;
 import main.Models.*;
+import View.MyFrame;
 
 import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.Scanner;
@@ -33,7 +36,6 @@ public class LibraryServer {
     private static TimeManager timeManager;
     private static final LocalTime OPENING_TIME = LocalTime.of(8, 0, 0);
     private static final LocalTime CLOSING_TIME = LocalTime.of(19, 0, 0);
-
 
     public static final String BOOKSFILE = "TextFiles/Books.txt";
 
@@ -59,34 +61,8 @@ public class LibraryServer {
             System.out.println("Could dont Find Books file");
         }
 
-        StringBuilder commandBuilder = new StringBuilder();
-        Scanner commandScanner = new Scanner(System.in);
-
-        do {
-            do {
-                System.out.print("Enter commands >");
-                commandBuilder.append(commandScanner.nextLine());
-            } while(!commandBuilder.toString().endsWith(";"));
-
-            //deletes the semicolon at the end of the string
-            commandBuilder.deleteCharAt(commandBuilder.length()-1);
-
-            ArrayList<String> Parameters = new ArrayList<String>();
-            for(String command : commandBuilder.toString().split(",")) {
-
-                String actualCommand = command.trim();
-                Parameters.add(actualCommand);
-
-            }//end for loop
-
-            if(Parameters.size() > 0) {
-
-                Response systemResponse = getSystemResponse(Parameters);
-                System.out.println("response >> " + systemResponse.getResponse());
-            }
-
-            commandBuilder = new StringBuilder();
-        } while(isRunning);
+        MyFrame frame = new MyFrame();
+        frame.setVisible(true);
 
         //Save Library
         //End Application
@@ -105,7 +81,7 @@ public class LibraryServer {
         return LibrarySaveAndRead.saveLibrary(library);
     }
 
-    private static Response getSystemResponse(ArrayList<String> parameters){
+   public static Response getSystemResponse(ArrayList<String> parameters) {
         Request userRequest;
         //todo: Need to change this to an actual default state
         Response systemResponse = new RegisterResponse();
@@ -118,8 +94,8 @@ public class LibraryServer {
                 isRunning = false;
                 break;
             case "register":
-                if(parameters.size() == 5) {
-                    userRequest = new RegisterRequest(library,parameters);
+                if (parameters.size() == 5) {
+                    userRequest = new RegisterRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
@@ -275,5 +251,3 @@ public class LibraryServer {
 
         System.out.println(testLibrary.toString());
     }*/
-
-}

@@ -41,7 +41,7 @@ public class LibraryServer {
 
     public static void main(String[] args) {
 
-
+        timeManager = new TimeManager();
         LibraryServer.readTime();
         library = openLibrary();
 
@@ -161,6 +161,12 @@ public class LibraryServer {
                     systemResponse = userRequest.performRequest();
                 }
             break;
+            case "datetime":
+                if(parameters.size() == 1){
+                    userRequest = new DateTimeRequest(library);
+                    systemResponse = userRequest.performRequest();
+                }
+                break;
             default:
                 System.out.println("Invalid command, please try again");
                 break;

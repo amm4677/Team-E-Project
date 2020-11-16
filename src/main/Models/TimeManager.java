@@ -44,7 +44,7 @@ public class TimeManager implements Serializable {
     /*
         The default constructor for the class
      */
-    private TimeManager()
+    public TimeManager()
     {
         calendar = Calendar.getInstance();
 
@@ -125,10 +125,8 @@ public class TimeManager implements Serializable {
     @Override
     public String toString()
     {
-        return "TimeManager{" +
-                "Date=" + getFormattedDate() +
-                "Time=" + getFormattedTime() +
-                "}";
+        return "Date=" + getFormattedDate() +
+                ", Time=" + getFormattedTime();
     }
 
     public String getFormattedDate()

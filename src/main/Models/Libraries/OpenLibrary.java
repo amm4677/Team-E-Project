@@ -35,9 +35,10 @@ public class OpenLibrary extends LibraryBase implements Serializable {
     }
 
     @Override
-    public void addVisitor(Visitor visitor) {
+    public boolean addVisitor(Visitor visitor) {
         Long ID = visitor.getID();
         Register.put(ID, visitor);
+        return true;
     }
 
     /**

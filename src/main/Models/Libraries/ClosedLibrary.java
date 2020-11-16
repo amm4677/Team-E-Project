@@ -33,8 +33,9 @@ public class ClosedLibrary extends LibraryBase implements Serializable {
     }
 
     @Override
-    public void addVisitor(Visitor visitor) {
-        System.out.println("Cannot add " + visitor + " as a visitor because the library is closed");
+    public boolean addVisitor(Visitor visitor) {
+        //Cannot add   visitor  as a visitor because the library is closed
+        return false;
     }
 
     @Override

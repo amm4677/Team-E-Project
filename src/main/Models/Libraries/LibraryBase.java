@@ -31,12 +31,15 @@ public abstract class LibraryBase implements Serializable {
     }
 
     //abstract methods
-    public abstract void addVisitor(Visitor visitor);
+    public abstract boolean addVisitor(Visitor visitor);
     public abstract Visit startVisit(Long visitorID);
     public abstract Visit endVisit(Long visitorID);
     public abstract boolean visitorCheckOut(Visitor visitor, Long ISBN);
     public abstract boolean borrowBook(Long VisitorID, Long ISBN);
 
+    public String getTime(){
+        return time.toString();
+    }
 
     public HashMap<Long, Visitor> getRegister() {
         return Register;

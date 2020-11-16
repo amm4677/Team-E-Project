@@ -59,7 +59,11 @@ public class RegisterRequest implements Request {
 
         //only increment the nextVisitorID when it is known that the visitor will be added
         nextVisitorID ++;
-        proxyLibrary.addVisitor(newVisitor);
-        return new RegisterResponse(newVisitor.getID());
+        boolean wasAdded = proxyLibrary.addVisitor(newVisitor);
+        if(wasAdded) {
+            return new RegisterResponse(newVisitor.getID());
+        }
+
+        return new RegisterResponse(wasAdded);
     }
 }

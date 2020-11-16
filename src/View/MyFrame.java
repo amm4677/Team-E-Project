@@ -40,6 +40,7 @@ public class MyFrame extends JFrame implements ActionListener {
 
         //Sets the input submit button
         button = new JButton("Submit");
+        button.setFont(new Font("MV Boli", Font.PLAIN, 30));
         button.addActionListener(this);
 
         //Adds all Components to frame and makes visible
@@ -67,13 +68,15 @@ public class MyFrame extends JFrame implements ActionListener {
                 ImageIcon library = new ImageIcon("libraryIcon.png");
                 frame.setIconImage(library.getImage());
                 frame.setResizable(true);
+                frame.setSize(1000,1000);
 
-                //Sets Label
-                JLabel response = new JLabel(systemResponse.getResponse());
-                response.setFont(new Font("MV Boli", Font.PLAIN, 20));
+                //Sets Text Area
+                JTextArea response = new JTextArea(systemResponse.getResponse());
+                response.setLineWrap(true);
+                response.setFont(new Font("MV Boli", Font.PLAIN, 30));
 
                 frame.add(response);
-                frame.pack();
+                //frame.pack();
                 frame.setVisible(true);
             }
         }

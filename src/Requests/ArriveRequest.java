@@ -2,19 +2,25 @@ package Requests;
 
 import Resposes.ArriveResponse;
 import Resposes.Response;
+import main.Models.Libraries.LibraryBase;
 import main.Models.OwningLibrary;
 import main.Models.Visit;
 
 import java.util.ArrayList;
 
+/**
+ * represents the request to begin a visit. One of the concrete commands in our command pattern and a part of our Mediator pattern
+ *
+ * @author Joseph Saltalamacchia
+ */
 public class ArriveRequest implements Request {
 
     private static final RequestNames.RequestName COMMAND = RequestNames.RequestName.ARRIVE;
     Long visitorID;
     String invalidID;
-    OwningLibrary library;
+    LibraryBase library;
 
-    public ArriveRequest(OwningLibrary library, ArrayList<String> parameters){
+    public ArriveRequest(LibraryBase library, ArrayList<String> parameters){
 
         String stringID = parameters.get(1);
 

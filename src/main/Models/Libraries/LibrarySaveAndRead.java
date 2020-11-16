@@ -1,9 +1,12 @@
-package main.Models;
+package main.Models.Libraries;
+
+import main.Models.OwningLibrary;
 
 import java.io.*;
 
 /**
  * A helper class for reading in and saving a given library
+ * @author Joseph Saltalamacchia
  */
 public class LibrarySaveAndRead {
 
@@ -12,7 +15,7 @@ public class LibrarySaveAndRead {
      * @param library the library being saved
      * @return true if the library was saved, false otherwise
      */
-    public static boolean saveLibrary(OwningLibrary library) {
+    public static boolean saveLibrary(LibraryBase library) {
         try {
             //create a writer for the Books
             FileOutputStream fLibrary = new FileOutputStream(new File("TextFiles/Library.bin"));
@@ -39,16 +42,22 @@ public class LibrarySaveAndRead {
      * reads in the library from an external bin file, and converts it into an owning library obejct
      * @return the library that was read in
      */
-    public static OwningLibrary openLibrary() {
+    public static LibraryBase openLibrary() {
 
-        OwningLibrary oldLibrary = null;
+        LibraryBase oldLibrary = null;
 
         try {
             FileInputStream fLibrary = new FileInputStream(new File("TextFiles/Library.bin"));
             ObjectInputStream oLibrary = new ObjectInputStream(fLibrary);
 
             try {
-               oldLibrary = (OwningLibrary) oLibrary.readObject();
+               Object inputLibrary =  oLibrary.readObject();
+               if(inputLibrary instanceof OpenLibrary){
+                   oldLibrary = (OpenLibrary) inputLibrary;
+               }
+               else if(inputLibrary instanceof ClosedLibrary){
+                   oldLibrary = (ClosedLibrary) inputLibrary;
+                }
 
             } catch (EOFException ignored) {
             }

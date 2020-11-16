@@ -4,6 +4,11 @@ import Requests.EndVisitRequest;
 import Requests.RequestNames;
 import main.Models.Visit;
 
+/**
+ * represents the response the request to end a visit to the library. One of the concrete commands in our command pattern and a part of our Mediator pattern
+ *
+ * @author Joseph Saltalamacchia
+ */
 public class EndVisitResponse implements Response{
 
     private static final RequestNames.RequestName COMMAND = RequestNames.RequestName.DEPART;

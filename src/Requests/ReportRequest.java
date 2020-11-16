@@ -2,6 +2,7 @@ package Requests;
 
 import Resposes.RegisterResponse;
 import Resposes.Response;
+import main.Models.Libraries.LibraryBase;
 import main.Models.OwningLibrary;
 import main.Models.Visitor;
 
@@ -17,7 +18,7 @@ public class ReportRequest implements Request{
     RequestNames.RequestName Command = RequestNames.RequestName.REPORT;
 
     //a proxy for the library that the Visitor is being added to
-    private OwningLibrary proxyLibrary;
+    private LibraryBase proxyLibrary;
 
     public ReportRequest() {
         //Can be empty

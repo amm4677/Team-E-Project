@@ -2,8 +2,7 @@ package Requests;
 
 import Resposes.RegisterResponse;
 import Resposes.Response;
-import main.Models.LibraryBase;
-import main.Models.OwningLibrary;
+import main.Models.Libraries.LibraryBase;
 import main.Models.Visitor;
 
 import java.util.ArrayList;

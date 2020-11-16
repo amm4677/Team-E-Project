@@ -1,6 +1,9 @@
-package main.Models;
+package main.Models.Libraries;
 
-import Appl.LibraryServer;
+import main.Models.Book;
+import main.Models.Libraries.LibraryBase;
+import main.Models.Visit;
+import main.Models.Visitor;
 
 public class ClosedLibrary extends LibraryBase {
 

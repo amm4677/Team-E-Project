@@ -1,8 +1,10 @@
-package main.Models;
+package main.Models.Libraries;
 
-import java.io.*;
-import java.util.Iterator;
-import java.util.Map;
+import main.Models.Book;
+import main.Models.Libraries.LibraryBase;
+import main.Models.LibraryEntry;
+import main.Models.Visit;
+import main.Models.Visitor;
 
 public class OpenLibrary extends LibraryBase {
 

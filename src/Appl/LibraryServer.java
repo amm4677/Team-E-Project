@@ -1,8 +1,6 @@
 package Appl;
 
 import Requests.*;
-
-import Resposes.BuyResponse;
 import Resposes.RegisterResponse;
 import Resposes.Response;
 import main.Models.Book;
@@ -10,8 +8,6 @@ import main.Models.OwningLibrary;
 import main.Models.TimeManager;
 import View.MyFrame;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalTime;
@@ -28,7 +24,6 @@ public class LibraryServer {
     private static HashMap<Long, Book> bookStore;
 
 
-
     public static final String BOOKSFILE = "TextFiles/Books.txt";
 
     public static Boolean isRunning = true;
@@ -43,40 +38,14 @@ public class LibraryServer {
 
         // Scanner reader = new Scanner(new File(BOOKSFILE))
 
-        try{
+        try {
             bookStore = CSVBookParser.CreateBooks(new File(BOOKSFILE));
-        }catch (FileNotFoundException f){
-            System.out.println("Could dont Find Books file");
+        } catch (FileNotFoundException f) {
+            System.out.println("Could Not Find Books File");
         }
 
-        /*StringBuilder commandBuilder = new StringBuilder();
-        Scanner commandScanner = new Scanner(System.in);
-
-        do {
-            do {
-                System.out.print("Enter commands >");
-                commandBuilder.append(commandScanner.nextLine());
-            } while(!commandBuilder.toString().endsWith(";"));
-
-            //deletes the semicolon at the end of the string
-            commandBuilder.deleteCharAt(commandBuilder.length()-1);
-
-            ArrayList<String> Parameters = new ArrayList<String>();
-            for(String command : commandBuilder.toString().split(",")) {
-
-                String actualCommand = command.trim();
-                Parameters.add(actualCommand);
-
-            }//end for loop
-
-            if(Parameters.size() > 0) {
-
-                Response systemResponse = getSystemResponse(Parameters);
-                System.out.println("response >> " + systemResponse.getResponse());
-            }
-
-            commandBuilder = new StringBuilder();
-        } while(isRunning);
+        MyFrame frame = new MyFrame();
+        frame.setVisible(true);
 
         //Save Library
         //End Application
@@ -84,38 +53,29 @@ public class LibraryServer {
 
         //used to test that the system worked
         //testPersistence(library);*/
-
-        MyFrame frame = new MyFrame();
-
-        frame.setVisible(true);
-
     }
 
 
-    private static Response getSystemResponse(ArrayList<String> parameters){
+   public static Response getSystemResponse(ArrayList<String> parameters) {
         Request userRequest;
         //todo: Need to change this to an actual default state
         Response systemResponse = new RegisterResponse();
 
-        switch(parameters.get(0).toLowerCase().trim()) {
-            case "quit":
-                isRunning = false;
-                break;
+        switch (parameters.get(0).toLowerCase().trim()) {
             case "register":
-                if(parameters.size() == 5) {
-                    userRequest = new RegisterRequest(library,parameters);
+                if (parameters.size() == 5) {
+                    userRequest = new RegisterRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
             case "arrive":
-                if(parameters.size() == 2)
-                {
+                if (parameters.size() == 2) {
                     userRequest = new ArriveRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
             case "depart":
-                if(parameters.size()==2){
+                if (parameters.size() == 2) {
                     userRequest = new EndVisitRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
@@ -126,27 +86,30 @@ public class LibraryServer {
                 break;
 
             case "search":
-                if(parameters.size() > 2) {
+                if (parameters.size() > 2) {
                     userRequest = new SearchRequest(bookStore.values(), parameters);
-                break;
-            case "borrow":
-                if(parameters.size() == 2){
-                    userRequest = new BorrowRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
-            case "buy":
-                if(parameters.size() >= 3){
-                    userRequest = new BuyRequest(library, bookStore, parameters);
-                    systemResponse = userRequest.performRequest();
-                }
-            break;
-            default:
-                System.out.println("Invalid command, please try again");
-                break;
-        }//end switch
+                case "borrow":
+                        if (parameters.size() == 2) {
+                            userRequest = new BorrowRequest(library, parameters);
+                            systemResponse = userRequest.performRequest();
+                        }
+                        break;
+                    case "buy":
+                        if (parameters.size() >= 3) {
+                            userRequest = new BuyRequest(library, bookStore, parameters);
+                            systemResponse = userRequest.performRequest();
+                        }
+                        break;
+                    default:
+                        System.out.println("Invalid command, please try again");
+                        break;
+                }//end switch
 
-        return systemResponse;
+                return systemResponse;
+        }
     }
 
     /*
@@ -209,5 +172,3 @@ public class LibraryServer {
 
         System.out.println(testLibrary.toString());
     }*/
-
-}

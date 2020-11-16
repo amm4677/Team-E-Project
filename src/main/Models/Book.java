@@ -51,6 +51,22 @@ public class Book implements Serializable {
     //There is on "set" method for the ISBN because it should never change
 
     /**
+     * returns the title for this book
+     * @return the title for this book
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * returns the authors for this book
+     * @return the authors for this book
+     */
+    public String getAuthors() {
+        return authors;
+    }
+
+    /**
      * retruns this book's publisher
      * @return the name of this book's publisher
      */
@@ -129,14 +145,11 @@ public class Book implements Serializable {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "ISBN=" + ISBN +
+        return "ISBN=" + ISBN +
+                ", title=" + title +
                 ", publisher='" + publisher + '\'' +
                 ", publishDate=" + publishDate +
-                ", totalPages=" + totalPages +
-                ", totalCopies=" + totalCopies +
-                ", copiesCheckedOut=" + copiesCheckedOut +
-                '}';
+                ", totalPages=" + totalPages;
     }
 
     //todo I left this commented out for now because I'm not sure if we want to set error states for invalid numbers of

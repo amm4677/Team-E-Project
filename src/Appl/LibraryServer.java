@@ -1,7 +1,8 @@
 package Appl;
 
 import Requests.*;
-//import Resposes.BuyResponse;
+
+import Resposes.BuyResponse;
 import Resposes.RegisterResponse;
 import Resposes.Response;
 
@@ -11,6 +12,7 @@ import main.Models.Libraries.ClosedLibrary;
 import main.Models.Libraries.LibraryBase;
 import main.Models.Libraries.OpenLibrary;
 import main.Models.TimeManager;
+import main.Models.*;
 
 import java.io.*;
 import java.time.LocalTime;
@@ -29,17 +31,26 @@ public class LibraryServer {
     private static final LocalTime OPENING_TIME = LocalTime.of(8, 0, 0);
     private static final LocalTime CLOSING_TIME = LocalTime.of(19, 0, 0);
 
+
     public static final String BOOKSFILE = "TextFiles/Books.txt";
 
     public static Boolean isRunning = true;
 
     public static void main(String[] args) {
 
+
         LibraryServer.readTime();
 
         //sets up library to be open or closed depending on time
         checkLibraryStatus();
+        //opens the library
+        library = openLibrary();
 
+        //if a library does not already exist, create a new one
+        if (library == null) {
+            library = new OwningLibrary(LocalTime.of(8, 0, 0),
+                    LocalTime.of(19, 0, 0));
+        }
         bookStore = new HashMap<Long, Book>();
 
         // Scanner reader = new Scanner(new File(BOOKSFILE))
@@ -81,20 +92,30 @@ public class LibraryServer {
 
         //Save Library
         //End Application
-        library.closeLibrary();
+        closeLibrary(library);
 
         //used to test that the system worked
         //testPersistence(library);
 
     }
 
+    private static OwningLibrary openLibrary() {
+        return LibrarySaveAndRead.openLibrary();
+    }
+
+    private static boolean closeLibrary(OwningLibrary library){
+        return LibrarySaveAndRead.saveLibrary(library);
+    }
 
     private static Response getSystemResponse(ArrayList<String> parameters){
         Request userRequest;
         //todo: Need to change this to an actual default state
         Response systemResponse = new RegisterResponse();
 
-        switch(parameters.get(0).toLowerCase().trim()) {
+        //ensures that commands are not case sensitive
+        String command = parameters.get(0).toLowerCase().trim();
+
+        switch(command) {
             case "quit":
                 isRunning = false;
                 break;
@@ -117,16 +138,31 @@ public class LibraryServer {
                     systemResponse = userRequest.performRequest();
                 }
                 break;
-            case "buy":
-                //todo this needs to become a request/response, and checking needs to happen
-               /* if(parameters.size() == 3){
-                    if(bookStore.containsKey(parameters.get(2))){
-                        library.addBook(bookStore.get(parameters.get(2)), Integer.parseInt(parameters.get(1)));
-                        systemResponse = new BuyResponse("BUY, " + parameters.get(2) + ", " + parameters.get(1));
-                    }
+            case "info":
+                //searching the library's inventory
+                userRequest = new InfoRequest(library, parameters);
+                systemResponse = userRequest.performRequest();
+                break;
+
+            case "search":
+                //searching the bookstore's inventory
+                if(parameters.size() > 2) {
+                    userRequest = new SearchRequest(bookStore.values(), parameters);
+                    systemResponse = userRequest.performRequest();
                 }
-                systemResponse = new BuyResponse("invalid ISBN");
-*/
+                break;
+            case "borrow":
+                if(parameters.size() == 2){
+                    userRequest = new BorrowRequest(library, parameters);
+                    systemResponse = userRequest.performRequest();
+                }
+                break;
+            case "buy":
+                if(parameters.size() >= 3){
+                    userRequest = new BuyRequest(library, bookStore, parameters);
+                    systemResponse = userRequest.performRequest();
+                }
+            break;
             default:
                 System.out.println("Invalid command, please try again");
                 break;
@@ -134,7 +170,6 @@ public class LibraryServer {
 
         return systemResponse;
     }
-
 
     private static void readTime() {
         try {
@@ -200,32 +235,6 @@ public class LibraryServer {
         }
     }
 
-   
-/*
-    private static ArrayList<String> splitCSV(String masterString) {
-        ArrayList<String> arguments = new ArrayList<String>();
-
-        //This could include matches with curly brackets within curly brackets. Filter them out and add them
-        Pattern curlyBrackets = Pattern.compile("\\{(.*?)},");
-        Matcher matcher = curlyBrackets.matcher(masterString);
-        while(matcher.find()) {
-            String s = matcher.group();
-            String substring = s.substring(1, s.length() - 3);
-
-            if(substring.contains("{") || substring.contains("}")) continue;
-
-            arguments.add(substring);
-            masterString = masterString.replace(s, "");
-        }
-
-        //Add remaining arguments
-        for(String s : masterString.split(",")) {
-            arguments.add(s);
-        }
-
-        return arguments;
-    }
-*/
 
     //test to ensure that system persistence works
 /*

@@ -41,7 +41,7 @@ public class LibraryServer {
 
     public static void main(String[] args) {
 
-        timeManager = new TimeManager();
+        timeManager = TimeManager.getInstance();
         LibraryServer.readTime();
         library = openLibrary();
 

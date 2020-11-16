@@ -5,10 +5,7 @@ import Requests.*;
 import Resposes.BuyResponse;
 import Resposes.RegisterResponse;
 import Resposes.Response;
-import main.Models.Book;
-import main.Models.OwningLibrary;
-import main.Models.TimeManager;
-import main.Models.Visitor;
+import main.Models.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,9 +35,13 @@ public class LibraryServer {
     public static void main(String[] args) {
 
         //opens the library
-        library = new OwningLibrary(LocalTime.of(8, 0, 0),
-                LocalTime.of(19, 0, 0));
+        library = openLibrary();
 
+        //if a library does not already exist, create a new one
+        if (library == null) {
+            library = new OwningLibrary(LocalTime.of(8, 0, 0),
+                    LocalTime.of(19, 0, 0));
+        }
         bookStore = new HashMap<Long, Book>();
 
         // Scanner reader = new Scanner(new File(BOOKSFILE))
@@ -82,20 +83,30 @@ public class LibraryServer {
 
         //Save Library
         //End Application
-        library.closeLibrary();
+        closeLibrary(library);
 
         //used to test that the system worked
         //testPersistence(library);
 
     }
 
+    private static OwningLibrary openLibrary() {
+        return LibrarySaveAndRead.openLibrary();
+    }
+
+    private static boolean closeLibrary(OwningLibrary library){
+        return LibrarySaveAndRead.saveLibrary(library);
+    }
 
     private static Response getSystemResponse(ArrayList<String> parameters){
         Request userRequest;
         //todo: Need to change this to an actual default state
         Response systemResponse = new RegisterResponse();
 
-        switch(parameters.get(0).toLowerCase().trim()) {
+        //ensures that commands are not case sensitive
+        String command = parameters.get(0).toLowerCase().trim();
+
+        switch(command) {
             case "quit":
                 isRunning = false;
                 break;
@@ -119,13 +130,17 @@ public class LibraryServer {
                 }
                 break;
             case "info":
+                //searching the library's inventory
                 userRequest = new InfoRequest(library, parameters);
                 systemResponse = userRequest.performRequest();
                 break;
 
             case "search":
+                //searching the bookstore's inventory
                 if(parameters.size() > 2) {
                     userRequest = new SearchRequest(bookStore.values(), parameters);
+                    systemResponse = userRequest.performRequest();
+                }
                 break;
             case "borrow":
                 if(parameters.size() == 2){
@@ -147,31 +162,7 @@ public class LibraryServer {
         return systemResponse;
     }
 
-    /*
-    private static ArrayList<String> splitCSV(String masterString) {
-        ArrayList<String> arguments = new ArrayList<String>();
 
-        //This could include matches with curly brackets within curly brackets. Filter them out and add them
-        Pattern curlyBrackets = Pattern.compile("\\{(.*?)},");
-        Matcher matcher = curlyBrackets.matcher(masterString);
-        while(matcher.find()) {
-            String s = matcher.group();
-            String substring = s.substring(1, s.length() - 3);
-
-            if(substring.contains("{") || substring.contains("}")) continue;
-
-            arguments.add(substring);
-            masterString = masterString.replace(s, "");
-        }
-
-        //Add remaining arguments
-        for(String s : masterString.split(",")) {
-            arguments.add(s);
-        }
-
-        return arguments;
-    }
-*/
 
     //test to ensure that system persistence works
 /*

@@ -8,6 +8,7 @@ import main.Models.TimeManager;
 import org.xml.sax.helpers.AttributesImpl;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -82,14 +83,14 @@ public class BorrowRequest implements Request {
 
 
         for(long ID : ISBNs) {
-            if (!libraryProxy.containsBook(ID)) {
+           /* if (!libraryProxy.containsBook(ID)) {
                 libraryProxy.borrowBook(visitorID, ID);
-            }
+            }*/
             libraryProxy.borrowBook(visitorID, ID);
         }
         //todo here dummy
-        Date dueDate = new Date();
-        return new BorrowResponse(dueDate.getDate());
+        LocalDate dueDate = LocalDate.now().plusDays(7);
+        return new BorrowResponse(1, dueDate.toString());
 
     }
 }

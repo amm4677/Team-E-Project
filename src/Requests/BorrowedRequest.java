@@ -3,6 +3,7 @@ package Requests;
 import Resposes.BorrowedResponse;
 import Resposes.Response;
 import main.Models.Book;
+import main.Models.CheckedOut;
 import main.Models.Libraries.LibraryBase;
 import main.Models.LibraryEntry;
 import main.Models.Visitor;
@@ -39,7 +40,7 @@ public class BorrowedRequest implements Request {
         //the id entered is valid
         if(libraryProxy.getRegister().containsKey(visitorID)){
             Visitor guest = libraryProxy.getRegister().get(visitorID);
-            List<Book> booksCheckedOut = guest.getBooksBorrowed();
+            ArrayList<CheckedOut> booksCheckedOut = guest.getBooksCheckedOut();
 
             return new BorrowedResponse(booksCheckedOut);
         }

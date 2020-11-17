@@ -2,7 +2,9 @@ package Resposes;
 
 import Requests.RequestNames;
 import main.Models.Book;
+import main.Models.CheckedOut;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BorrowedResponse implements Response{
@@ -15,14 +17,15 @@ public class BorrowedResponse implements Response{
         responseMessage = COMMAND + "The visitor ID does not match a registered Visitor";
     }
 
-    public BorrowedResponse(List<Book> booksBorrowed){
+    public BorrowedResponse(ArrayList<CheckedOut> booksBorrowed){
 
         responseMessage = COMMAND.toString() + booksBorrowed.size();
         int index = 0;
 
-        for(Book book : booksBorrowed){
+        for(CheckedOut book : booksBorrowed){
             responseMessage = responseMessage + "\n" + index + ", " +
-                    book.getISBN() + ", " + book.getTitle();
+                    book.getBook().getISBN() + ", " + book.getBook().getTitle() +
+                    ", " + book.getDueDate();
         }
     }
 

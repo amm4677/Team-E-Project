@@ -29,8 +29,8 @@ public class BorrowResponse implements Response{
         responseMessage = "Visitor has an outstanding fine of $" + fine;
     }
 
-    public BorrowResponse(int num){
-        responseMessage = ((Integer)num).toString();
+    public BorrowResponse(int num, String dueDate){
+        responseMessage = dueDate;
     }
     @Override
     public RequestNames.RequestName getCommand() {

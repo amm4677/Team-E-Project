@@ -183,6 +183,10 @@ public class Visitor implements Serializable {
         }
     }
 
+    public ArrayList<CheckedOut> getBooksCheckedOut(){
+        return booksCheckedOut;
+    }
+
     /**
      * removes a book from the list of books the visitor currently has checked out
      * @param checkedOut: the book being checked in

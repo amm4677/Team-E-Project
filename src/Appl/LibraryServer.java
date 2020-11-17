@@ -14,6 +14,7 @@ import main.Models.TimeManager;
 import main.Models.*;
 import View.MyFrame;
 
+import javax.swing.*;
 import java.io.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -149,7 +150,8 @@ public class LibraryServer {
                 }
                 break;
             case "borrow":
-                if (parameters.size() == 3 || (parameters.size() == 2 && lastBookStoreSearchID != -1)) {
+                System.out.println(lastLibrarySearchID);
+                if (parameters.size() == 3 || (parameters.size() == 2 && lastLibrarySearchID != -1)) {
                     if(lastLibrarySearchID != -1){
                         parameters.add(((Long)lastBookStoreSearchID).toString());
                     }
@@ -183,6 +185,8 @@ public class LibraryServer {
                     userRequest = new BorrowedRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
+            case "return":
+
             default:
                 System.out.println("Invalid command, please try again");
                 break;

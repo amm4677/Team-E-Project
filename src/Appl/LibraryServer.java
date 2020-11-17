@@ -43,7 +43,7 @@ public class LibraryServer {
 
     public static void main(String[] args) {
 
-        timeManager = TimeManager.getInstance();
+       // timeManager = TimeManager.getInstance();
         LibraryServer.readTime();
         library = openLibrary();
 
@@ -62,12 +62,12 @@ public class LibraryServer {
         }
 
         //********** Checks if open and prints status
-        System.out.println(library.checkIfOpen());
+       // System.out.println(library.checkIfOpen());
         //********** Forces the library into a new OpenLibrary Class
-        OpenLibrary libraryOpen = new OpenLibrary(library.forceOpen());
-        library = libraryOpen;
+        //OpenLibrary libraryOpen = new OpenLibrary(library.forceOpen());
+       // library = libraryOpen;
         //********** Reprints status
-        System.out.println(library.checkIfOpen());
+       // System.out.println(library.checkIfOpen());
         //**********
 
         MyFrame frame = new MyFrame();
@@ -76,6 +76,7 @@ public class LibraryServer {
         //Save Library
         //End Application
         closeLibrary(library);
+        writeTime();
 
         //used to test that the system worked
         //testPersistence(library);
@@ -98,9 +99,15 @@ public class LibraryServer {
         //ensures that commands are not case sensitive
         String command = parameters.get(0).toLowerCase().trim();
 
+        checkLibraryStatus();
+
         switch (command) {
             case "quit":
                 isRunning = false;
+                break;
+            case "save":
+                closeLibrary(library);
+                writeTime();
                 break;
             case "register":
                 if (parameters.size() == 5) {
@@ -147,13 +154,13 @@ public class LibraryServer {
                 break;
             case "datetime":
                 if (parameters.size() == 1) {
-                    userRequest = new DateTimeRequest(library);
+                    userRequest = new DateTimeRequest(timeManager);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
             case "advance":
                 if (parameters.size() == 3) {
-                    userRequest = new AdvanceTimeRequest(library, parameters);
+                    userRequest = new AdvanceTimeRequest(library, timeManager,  parameters);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
@@ -210,8 +217,14 @@ public class LibraryServer {
 
     private static void checkLibraryStatus() {
 
-        int openCompare = timeManager.getLocalTime().compareTo(OPENING_TIME);
-        int closeCompare = timeManager.getLocalTime().compareTo(CLOSING_TIME);
+        int hours = timeManager.getHours();
+        int minutes = timeManager.getMinutes();
+        int seconds = timeManager.getSeconds();
+
+        LocalTime currentTime = LocalTime.of(hours, minutes, seconds);
+
+        int openCompare = currentTime.compareTo(OPENING_TIME);
+        int closeCompare = currentTime.compareTo(CLOSING_TIME);
 
         //can't have a null library, make closed with a status of default so it can be overridden by one of the two cases.
         if (library == null) {
@@ -219,12 +232,19 @@ public class LibraryServer {
             library.libraryStatus = LibraryBase.LibraryStatus.Default;
         }
 
+        System.out.println(timeManager.getLocalTime());
+        System.out.println(OPENING_TIME);
+        System.out.println(CLOSING_TIME);
+        System.out.println(openCompare);
+        System.out.println(closeCompare);
+        System.out.println(((openCompare >= 0) && (closeCompare < 0) && (library instanceof ClosedLibrary)));
+        System.out.println(((openCompare < 0) && (closeCompare >= 0) && (library instanceof OpenLibrary)));
         //if within opening and closing hours and library is not open, make an OpenLibrary()
-        if (openCompare >= 0 && closeCompare < 0 && library.libraryStatus != LibraryBase.LibraryStatus.Open) {
+        if ((openCompare >= 0) && (closeCompare < 0) && (library instanceof ClosedLibrary)) {
             library = new OpenLibrary(library);
         }
         //else if the library is outside the bounds of opening and closing time and is not closed, make a ClosedLibrary()
-        else if (library.libraryStatus != LibraryBase.LibraryStatus.Closed) {
+        else if ((openCompare < 0) && (closeCompare >= 0) && (library instanceof OpenLibrary)) {
             library = new ClosedLibrary(library);
         }
     }

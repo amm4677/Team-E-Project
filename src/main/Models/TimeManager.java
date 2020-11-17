@@ -138,15 +138,41 @@ public class TimeManager implements Serializable {
     public String getFormattedTime()
     {
         UpdateCalendar();
-        return calendar.get(Calendar.HOUR) + ":" + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND);
+
+        String hours = String.format("%02d",getHours());
+        String minutes = String.format("%02d",getMinutes());
+        String seconds = String.format("%02d", getSeconds());
+
+        return hours + ":" + minutes + ":" + seconds;
+    }
+
+    public int getHours(){
+        String hours = String.format("%02d",calendar.get(Calendar.HOUR_OF_DAY));
+
+        return Integer.parseInt(hours);
+    }
+
+    public int getMinutes(){
+        String minutes = String.format("%02d",calendar.get(Calendar.MINUTE));
+
+        return Integer.parseInt(minutes);
+    }
+
+    public int getSeconds(){
+        String seconds = String.format("%02d",calendar.get(Calendar.SECOND));
+
+        return Integer.parseInt(seconds);
     }
 
     public LocalTime getLocalTime() {
-        DateTimeFormatter formatter =
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S", Locale.US);
+        //getFormattedDate();
 
-        String text = "2011-02-18 05:00:00.0";
-        LocalDateTime localDateTime = LocalDateTime.parse(text, formatter);
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.US);
+
+        LocalDateTime localDateTime = LocalDateTime.parse((getFormattedDate() + " "+ getFormattedTime() ), formatter);
+
+
         return localDateTime.toLocalTime();
     }
 

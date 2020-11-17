@@ -3,7 +3,9 @@ package Requests;
 import Resposes.DateTimeResponse;
 import Resposes.Response;
 import main.Models.Libraries.LibraryBase;
+import main.Models.TimeManager;
 
+import java.sql.Time;
 import java.util.Date;
 
 /**
@@ -13,14 +15,14 @@ import java.util.Date;
  */
 public class DateTimeRequest implements Request{
 
-    LibraryBase proxyLibrary;
+    TimeManager proxyTimeManager;
 
-   public DateTimeRequest(LibraryBase library){
-       proxyLibrary = library;
+   public DateTimeRequest(TimeManager timeManager){
+       proxyTimeManager = timeManager;
    }
 
     @Override
     public Response performRequest() {
-        return new DateTimeResponse(proxyLibrary.getTime());
+        return new DateTimeResponse(proxyTimeManager.toString());
     }
 }

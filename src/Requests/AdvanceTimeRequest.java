@@ -3,6 +3,7 @@ package Requests;
 import Resposes.AdvanceTimeResponse;
 import Resposes.Response;
 import main.Models.Libraries.LibraryBase;
+import main.Models.TimeManager;
 
 import java.util.ArrayList;
 
@@ -15,10 +16,12 @@ public class AdvanceTimeRequest implements Request {
 
     LibraryBase libraryProxy;
     ArrayList<String> parameters;
+    TimeManager timeManagerProxy;
 
-    public AdvanceTimeRequest(LibraryBase library, ArrayList<String> parameters){
+    public AdvanceTimeRequest(LibraryBase library, TimeManager timeManager, ArrayList<String> parameters){
         libraryProxy = library;
         this.parameters = parameters;
+        timeManagerProxy = timeManager;
     }
 
 
@@ -44,6 +47,8 @@ public class AdvanceTimeRequest implements Request {
         }
 
         libraryProxy.advanceTime(days, hours);
+        timeManagerProxy.addHours(hours);
+        timeManagerProxy.addDays(days);
         return new AdvanceTimeResponse();
     }
 }

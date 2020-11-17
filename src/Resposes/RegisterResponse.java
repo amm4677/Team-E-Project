@@ -1,6 +1,7 @@
 package Resposes;
 
 import Requests.RequestNames;
+import main.Models.TimeManager;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -21,7 +22,7 @@ public class RegisterResponse implements Response {
      * @param visitorID the ID number of the visitor
      */
     public RegisterResponse(Long visitorID) {
-        String registrationDate = new Date().toString();
+        String registrationDate = TimeManager.getInstance().getLocalTime().toString();
 
         responseMessage = ("Register >> Visitor ID: " + visitorID.toString() + ", Registration Date: " + registrationDate);
     }

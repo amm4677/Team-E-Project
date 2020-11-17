@@ -118,4 +118,20 @@ public abstract class LibraryBase implements Serializable {
         return report;
     }
 
+    //***************** Checks if open status by verifying if it is a Openlibrary class
+    public boolean checkIfOpen() {
+        if (this instanceof OpenLibrary) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //***************** Sets library status to open and returns a new OpenLibrary instance
+    public OpenLibrary forceOpen() {
+        this.libraryStatus = LibraryStatus.Open;
+        OpenLibrary library = new OpenLibrary(this);
+        return library;
+    }
+
 }

@@ -32,7 +32,6 @@ public class BorrowRequest implements Request {
 
     /**
      * contructor for the request to borrow a book
-     * //todo change this to work with multiple books
      * @param library the library the books being borrowed are coming from
      * @param parameters
      */

@@ -32,7 +32,7 @@ public class InfoResponse implements Response {
 
         for (LibraryEntry e : books) {
             builder.append(",\n");
-            builder.append(e.getBook().getTotalCopies() - e.getCopiesCheckedOut());
+            builder.append(e.getTotalCopies() - e.getCopiesCheckedOut());
             builder.append(",");
             builder.append(e.getBook().getISBN());
             builder.append(",");

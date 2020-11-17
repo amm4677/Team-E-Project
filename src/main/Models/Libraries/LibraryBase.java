@@ -126,6 +126,55 @@ public abstract class LibraryBase implements Serializable {
         return report;
     }
 
+    private String getAverageLengthOfVisit(){
+        double average;
+        double total = 0;
+
+        for(Visit v : Visits){
+            total = total + v.getLengthOfVisit();
+        }
+
+        average = total/Visits.size();
+
+        int seconds =  (int)average/1000;
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+        int hours = minutes / 60;
+        minutes = minutes % 60;
+
+        String time = hours + ":" + minutes + ":" +minutes;
+
+        return(time);
+    }
+
+    private int totalDifferentBooks(){
+        return Inventory.size();
+    }
+
+    private int totalBooksPurchased(){
+        int total = 0;
+
+        for(LibraryEntry b : Inventory.values()){
+            total = total +b.getTotalCopies();
+        }
+
+        return total;
+    }
+
+    private int totalNumberOfVisitors(){
+        return Register.size();
+    }
+
+
+    public String report(){
+        String report = time.getFormattedDate() + ", " +
+                "\nNumber of Books: " + totalDifferentBooks() + ", " +
+                "\nNumber of Visitors: " + totalNumberOfVisitors() + ", " +
+                "\nAverage Length of Visit : " + getAverageLengthOfVisit() +
+                "\nNumber of Books Purchased: " + totalBooksPurchased();
+
+        return report;
+    }
     //***************** Checks if open status by verifying if it is a Openlibrary class
     public boolean checkIfOpen() {
         if (this instanceof OpenLibrary) {

@@ -185,6 +185,10 @@ public class LibraryServer {
                     userRequest = new BorrowedRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
+            case "report":
+                userRequest = new ReportRequest(library);
+                systemResponse = userRequest.performRequest();
+                break;
             case "return":
 
             default:

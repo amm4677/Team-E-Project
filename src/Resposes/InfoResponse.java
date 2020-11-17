@@ -9,9 +9,13 @@ public class InfoResponse implements Response {
     private final RequestNames.RequestName RESPONSE_NAME = RequestNames.RequestName.INFO;
 
     private ArrayList<LibraryEntry> books;
+    private long firstBookID;
 
     public InfoResponse(ArrayList<LibraryEntry> books) {
         this.books = books;
+        if(books.size() > 0) {
+            firstBookID = books.get(0).getISBN();
+        }
     }
 
     @Override
@@ -37,5 +41,9 @@ public class InfoResponse implements Response {
         }
 
         return builder.toString();
+    }
+
+    public long getFirstBookID(){
+        return firstBookID;
     }
 }

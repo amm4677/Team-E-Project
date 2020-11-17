@@ -2,11 +2,9 @@ package Appl;
 
 import Requests.*;
 
-import Resposes.RegisterResponse;
-import Resposes.Response;
+import Resposes.*;
 
 
-import Resposes.SaveResponse;
 import main.Models.Book;
 import main.Models.Libraries.ClosedLibrary;
 import main.Models.Libraries.LibraryBase;
@@ -42,11 +40,15 @@ public class LibraryServer {
 
     public static Boolean isRunning = true;
 
+    private static long lastBookStoreSearchID;
+    private static long lastLibrarySearchID;
+
     public static void main(String[] args) {
 
        // timeManager = TimeManager.getInstance();
         LibraryServer.readTime();
         library = openLibrary();
+        LibraryEntry mostRecentSearch = null;
 
         //sets up library to be open or closed depending on time
         checkLibraryStatus();
@@ -62,6 +64,8 @@ public class LibraryServer {
             System.out.println("Could dont Find Books file");
         }
 
+        lastLibrarySearchID = -1;
+        lastBookStoreSearchID = -1;
         //********** Checks if open and prints status
        // System.out.println(library.checkIfOpen());
         //********** Forces the library into a new OpenLibrary Class
@@ -132,23 +136,32 @@ public class LibraryServer {
                 //searching the library's inventory
                 userRequest = new InfoRequest(library, parameters);
                 systemResponse = userRequest.performRequest();
-                break;
+                //todo: this is terrible design and needs to be refactored
+                lastLibrarySearchID = ((InfoResponse)systemResponse).getFirstBookID();
 
+                break;
             case "search":
                 //searching the bookstore's inventory
                 if (parameters.size() > 2) {
                     userRequest = new SearchRequest(bookStore.values(), parameters);
                     systemResponse = userRequest.performRequest();
+                    lastBookStoreSearchID = ((SearchResponse)systemResponse).getFirstBookID();
                 }
                 break;
             case "borrow":
-                if (parameters.size() == 2) {
-                    userRequest = new BorrowRequest(library, parameters);
+                if (parameters.size() == 3 || (parameters.size() == 2 && lastBookStoreSearchID != -1)) {
+                    if(lastLibrarySearchID != -1){
+                        parameters.add(((Long)lastBookStoreSearchID).toString());
+                    }
+                    userRequest = new BorrowRequest(library, parameters, timeManager);
                     systemResponse = userRequest.performRequest();
                 }
                 break;
             case "buy":
-                if (parameters.size() >= 3) {
+                if (parameters.size() >= 3 || (parameters.size() == 2 && lastBookStoreSearchID != -1)) {
+                    if(lastBookStoreSearchID != -1){
+                        parameters.add(((Long)lastBookStoreSearchID).toString());
+                    }
                     userRequest = new BuyRequest(library, bookStore, parameters);
                     systemResponse = userRequest.performRequest();
                 }
@@ -233,13 +246,6 @@ public class LibraryServer {
             library.libraryStatus = LibraryBase.LibraryStatus.Default;
         }
 
-        System.out.println(timeManager.getLocalTime());
-        System.out.println(OPENING_TIME);
-        System.out.println(CLOSING_TIME);
-        System.out.println(openCompare);
-        System.out.println(closeCompare);
-        System.out.println(((openCompare >= 0) && (closeCompare < 0) && (library instanceof ClosedLibrary)));
-        System.out.println(((openCompare < 0) && (closeCompare >= 0) && (library instanceof OpenLibrary)));
         //if within opening and closing hours and library is not open, make an OpenLibrary()
         if ((openCompare >= 0) && (closeCompare < 0) && (library instanceof ClosedLibrary)) {
             library = new OpenLibrary(library);
@@ -247,6 +253,7 @@ public class LibraryServer {
         //else if the library is outside the bounds of opening and closing time and is not closed, make a ClosedLibrary()
         else if ((openCompare < 0) && (closeCompare >= 0) && (library instanceof OpenLibrary)) {
             library = new ClosedLibrary(library);
+            library.closeVisits();
         }
     }
 }

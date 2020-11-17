@@ -10,9 +10,13 @@ public class SearchResponse implements Response {
     private final RequestNames.RequestName RESPONSE_NAME = RequestNames.RequestName.SEARCH;
 
     private ArrayList<Book> books;
+    private long firstBookID;
 
     public SearchResponse(ArrayList<Book> books) {
         this.books = books;
+        if (books.size() > 0){
+            firstBookID = books.get(0).getISBN();
+        }
     }
 
     @Override
@@ -41,5 +45,9 @@ public class SearchResponse implements Response {
         }
 
         return builder.toString();
+    }
+
+    public long getFirstBookID(){
+        return firstBookID;
     }
 }

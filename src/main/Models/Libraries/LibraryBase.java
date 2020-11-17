@@ -54,6 +54,14 @@ public abstract class LibraryBase implements Serializable {
         return Inventory;
     }
 
+    public void closeVisits(){
+        for(Visit v : Visits){
+            if(v.getIsOngoingVisit()){
+                v.endVisit(time.getDate());
+            }
+        }
+    }
+
     public ArrayList<Visit> getVisits(){
         return Visits;
     }

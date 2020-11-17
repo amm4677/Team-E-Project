@@ -142,7 +142,7 @@ public abstract class LibraryBase implements Serializable {
         int hours = minutes / 60;
         minutes = minutes % 60;
 
-        String time = hours + ":" + minutes + ":" +minutes;
+        String time = hours + ":" + minutes + ":" + minutes;
 
         return(time);
     }

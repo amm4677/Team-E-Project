@@ -6,6 +6,7 @@ import Resposes.RegisterResponse;
 import Resposes.Response;
 
 
+import Resposes.SaveResponse;
 import main.Models.Book;
 import main.Models.Libraries.ClosedLibrary;
 import main.Models.Libraries.LibraryBase;
@@ -92,9 +93,8 @@ public class LibraryServer {
     }
 
     public static Response getSystemResponse(ArrayList<String> parameters) {
-        Request userRequest;
-        //todo: Need to change this to an actual default state
-        Response systemResponse = new RegisterResponse();
+        Request userRequest = new DefualtRequest();
+        Response systemResponse = userRequest.performRequest();
 
         //ensures that commands are not case sensitive
         String command = parameters.get(0).toLowerCase().trim();
@@ -108,6 +108,7 @@ public class LibraryServer {
             case "save":
                 closeLibrary(library);
                 writeTime();
+                systemResponse = new SaveResponse();
                 break;
             case "register":
                 if (parameters.size() == 5) {

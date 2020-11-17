@@ -18,6 +18,8 @@ public class RequestNames {
         BUY,
         ADVANCE,
         DATETIME,
-        REPORT
+        REPORT,
+        SAVE,
+        DEFAULT
     }
 }

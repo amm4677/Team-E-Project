@@ -4,8 +4,13 @@ import Resposes.BorrowResponse;
 import Resposes.Response;
 import main.Models.Libraries.LibraryBase;
 import main.Models.OwningLibrary;
+import main.Models.TimeManager;
+import org.xml.sax.helpers.AttributesImpl;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * represents the request to borrow a book. One of the concrete commands in our command pattern and a part of our Mediator pattern
@@ -18,7 +23,8 @@ public class BorrowRequest implements Request {
     private static final RequestNames.RequestName COMMAND = RequestNames.RequestName.BORROW;
 
     LibraryBase libraryProxy;
-    private long ISBN;
+    TimeManager timeManagerProxy;
+    private ArrayList<Long> ISBNs;
     private long visitorID;
     private String invalidID;
 
@@ -29,19 +35,29 @@ public class BorrowRequest implements Request {
      * @param library the library the books being borrowed are coming from
      * @param parameters
      */
-    public BorrowRequest(LibraryBase library, ArrayList<String> parameters){
+    public BorrowRequest(LibraryBase library, ArrayList<String> parameters, TimeManager timeManager){
 
-        if(parameters.size() == 3){
+        timeManagerProxy = timeManager;
+        String visitorStringID = parameters.get(1);
 
-            String stringID = parameters.get(1);
+        this.libraryProxy = library;
+        if(Validator.validateAndParseLong(visitorStringID) == -1){
+            invalidID = visitorStringID;
+        }
+        visitorID = Validator.validateAndParseLong(visitorStringID);
 
-            this.libraryProxy = library;
-            if(Validator.validateAndParseLong(stringID) == -1){
-                invalidID = stringID;
+        //get a full list of Book IDs
+        List<String> allBookIDs = parameters.subList(2,parameters.size());
+
+        ISBNs = new ArrayList<>();
+
+        for(String bookID : allBookIDs) {
+
+            long ID = Validator.validateAndParseLong(bookID);
+
+            if(ID != -1) {
+                ISBNs.add(ID);
             }
-            visitorID = Validator.validateAndParseLong(stringID);
-
-            ISBN = Validator.validateAndParseLong(parameters.get(2));
         }
     }
     @Override
@@ -50,18 +66,30 @@ public class BorrowRequest implements Request {
         if(this.visitorID == -1 || !(libraryProxy.getRegister().containsKey(visitorID))){
             return new BorrowResponse(invalidID);
         }
-        if(!libraryProxy.containsBook(ISBN)){
-            return new BorrowResponse(ISBN);
+        else if(!(libraryProxy.getRegister().get(visitorID).canCheckOutBook())){
+
+            int numberOfBooksCheckedOut = libraryProxy.getRegister().get(visitorID).getBooksBorrowed().size();
+
+            if (numberOfBooksCheckedOut + ISBNs.size() > 5) {
+                return new BorrowResponse();
+            }
         }
-        if(!(libraryProxy.getRegister().get(visitorID).canCheckOutBook())){
-            return new BorrowResponse();
-        }
-        if(!(libraryProxy.getRegister().get(visitorID).owesFine())){
+        else if((libraryProxy.getRegister().get(visitorID).owesFine())){
             return new BorrowResponse(libraryProxy.getRegister().get(visitorID).getTotalFines());
         }
 
-        libraryProxy.borrowBook(visitorID, ISBN);
-        return new BorrowResponse(123);
+        //if all of the above passed, we can attempt to check out the books
+
+
+        for(long ID : ISBNs) {
+            if (!libraryProxy.containsBook(ID)) {
+                libraryProxy.borrowBook(visitorID, ID);
+            }
+            libraryProxy.borrowBook(visitorID, ID);
+        }
+        //todo here dummy
+        Date dueDate = new Date();
+        return new BorrowResponse(dueDate.getDate());
 
     }
 }

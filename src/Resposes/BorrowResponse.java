@@ -14,7 +14,7 @@ public class BorrowResponse implements Response{
     String responseMessage;
 
     /**
-     * contrustor for the case that the Visitor or Book ID is not valid
+     * constructor for the case that the Visitor or Book ID is not valid
      * @param inValidID the invalid ID
      */
     public BorrowResponse(String inValidID){
@@ -34,7 +34,7 @@ public class BorrowResponse implements Response{
     }
     @Override
     public RequestNames.RequestName getCommand() {
-        return null;
+        return COMMAND;
     }
 
     @Override

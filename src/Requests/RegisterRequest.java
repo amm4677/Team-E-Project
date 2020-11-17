@@ -20,7 +20,7 @@ public class RegisterRequest implements Request {
     private LibraryBase proxyLibrary;
 
     //a counter to increment the Visitor's id every time a new one is created, ensuring that every ID is unique
-    private static Long nextVisitorID = Long.valueOf(1000000000);
+    private Long nextVisitorID;
 
     private String firstName;
     private String lastName;
@@ -36,6 +36,7 @@ public class RegisterRequest implements Request {
 */
     public RegisterRequest(LibraryBase library, ArrayList<String> parameters) {
 
+        nextVisitorID =  Long.valueOf(1000000000);
         //todo do actual fact checking
         if(parameters.size() == 5) {
             this.firstName = parameters.get(1);
@@ -44,6 +45,7 @@ public class RegisterRequest implements Request {
             this.phoneNumber = parameters.get(4);
         }
         proxyLibrary = library;
+        getNextID();
     }
 
 
@@ -65,5 +67,13 @@ public class RegisterRequest implements Request {
         }
 
         return new RegisterResponse(wasAdded);
+    }
+
+    private void getNextID(){
+        for(Long ID : proxyLibrary.getRegister().keySet()){
+            if(nextVisitorID <= ID){
+                nextVisitorID = ID + 1;
+            }
+        }
     }
 }

@@ -178,6 +178,11 @@ public class LibraryServer {
                     systemResponse = userRequest.performRequest();
                 }
                 break;
+            case "borrowed":
+                if(parameters.size() ==2){
+                    userRequest = new BorrowedRequest(library, parameters);
+                    systemResponse = userRequest.performRequest();
+                }
             default:
                 System.out.println("Invalid command, please try again");
                 break;

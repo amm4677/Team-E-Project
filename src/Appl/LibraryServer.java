@@ -99,8 +99,8 @@ public class LibraryServer {
         //ensures that commands are not case sensitive
         String command = parameters.get(0).toLowerCase().trim();
 
-        checkLibraryStatus();
-
+      checkLibraryStatus();
+      
         switch (command) {
             case "quit":
                 isRunning = false;

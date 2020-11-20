@@ -78,6 +78,12 @@ public class MyFrame extends JFrame implements ActionListener {
 
             if(Parameters.size() > 0) {
 
+                //remove leading and trailing spaces
+                for (String p : Parameters){
+                    int index = Parameters.indexOf(p);
+                   Parameters.set(index,p.trim());
+                }
+
                 Response systemResponse = getSystemResponse(Parameters);
 
                 //Sets Frame

@@ -49,7 +49,6 @@ public class LibraryServer {
        // timeManager = TimeManager.getInstance();
         LibraryServer.readTime();
         library = openLibrary();
-        LibraryEntry mostRecentSearch = null;
 
         //sets up library to be open or closed depending on time
         checkLibraryStatus();
@@ -103,6 +102,8 @@ public class LibraryServer {
 
         //ensures that commands are not case sensitive
         String command = parameters.get(0).toLowerCase().trim();
+
+        System.out.println(parameters);
 
       checkLibraryStatus();
       
@@ -182,9 +183,11 @@ public class LibraryServer {
                 break;
             case "borrowed":
                 if(parameters.size() ==2){
+                    System.out.println("I'm here");
                     userRequest = new BorrowedRequest(library, parameters);
                     systemResponse = userRequest.performRequest();
                 }
+                break;
             case "report":
                 userRequest = new ReportRequest(library);
                 systemResponse = userRequest.performRequest();

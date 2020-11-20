@@ -3,13 +3,10 @@ package Requests;
 import Resposes.BorrowResponse;
 import Resposes.Response;
 import main.Models.Libraries.LibraryBase;
-import main.Models.OwningLibrary;
 import main.Models.TimeManager;
-import org.xml.sax.helpers.AttributesImpl;
 
-import java.sql.Time;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,7 +28,6 @@ public class BorrowRequest implements Request {
 
     /**
      * contructor for the request to borrow a book
-     * //todo change this to work with multiple books
      * @param library the library the books being borrowed are coming from
      * @param parameters
      */
@@ -80,16 +76,19 @@ public class BorrowRequest implements Request {
 
         //if all of the above passed, we can attempt to check out the books
 
+        boolean borrowed = false;
 
         for(long ID : ISBNs) {
-            if (!libraryProxy.containsBook(ID)) {
+           /* if (!libraryProxy.containsBook(ID)) {
                 libraryProxy.borrowBook(visitorID, ID);
-            }
-            libraryProxy.borrowBook(visitorID, ID);
+            }*/
+            borrowed = libraryProxy.borrowBook(visitorID, ID);
         }
         //todo here dummy
-        Date dueDate = new Date();
-        return new BorrowResponse(dueDate.getDate());
-
+        if(borrowed) {
+            LocalDate dueDate = LocalDate.now().plusDays(7);
+            return new BorrowResponse(1, dueDate.toString());
+        }
+        return new BorrowResponse(ISBNs.get(0));
     }
 }

@@ -1,5 +1,7 @@
 package main.Models;
 
+import Requests.Validator;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Calendar;
@@ -15,25 +17,37 @@ public class CheckedOut implements Serializable {
 
     private Book book;
     private long VisitorID;
-    private Date CheckoutDate;
-    private Date DueDate;
+    private String CheckoutDate;
+    private String DueDate;
 
-    public CheckedOut(Book book, long VisitorID, Date CheckoutDate) {
+    public CheckedOut(Book book, long VisitorID, String CheckoutDate) {
         this.book = book;
         this.VisitorID = VisitorID;
         this.CheckoutDate = CheckoutDate;
 
-        Calendar newDate = Calendar.getInstance();
-        newDate.setTime(CheckoutDate);
-        newDate.add(Calendar.DATE, 7);
-        DueDate = newDate.getTime();
+        TimeManager time = TimeManager.getInstance();
+
+        Date today = time.getDate();
+        //a placeholder claendar for formatting reasons
+        Calendar c = Calendar.getInstance();
+        c.setTime(today);
+        //the books is always due seven days from checkout
+        c.add(Calendar.DAY_OF_YEAR,7);
+        Date dueDate = c.getTime();
+        String dueDateString = time.getFormattedDate(dueDate);
+
+        DueDate = dueDateString;
     }
 
     public Book getBook() {
         return book;
     }
 
-    public Date getDueDate(){
+    public long getVisitorID(){
+        return VisitorID;
+    }
+
+    public String getDueDate(){
         return DueDate;
     }
 }

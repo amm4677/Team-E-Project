@@ -14,6 +14,7 @@ import main.Models.TimeManager;
 import main.Models.*;
 import View.MyFrame;
 
+import javax.swing.*;
 import java.io.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,7 +49,6 @@ public class LibraryServer {
        // timeManager = TimeManager.getInstance();
         LibraryServer.readTime();
         library = openLibrary();
-        LibraryEntry mostRecentSearch = null;
 
         //sets up library to be open or closed depending on time
         checkLibraryStatus();
@@ -103,6 +103,8 @@ public class LibraryServer {
         //ensures that commands are not case sensitive
         String command = parameters.get(0).toLowerCase().trim();
 
+        System.out.println(parameters);
+
       checkLibraryStatus();
       
         switch (command) {
@@ -149,7 +151,8 @@ public class LibraryServer {
                 }
                 break;
             case "borrow":
-                if (parameters.size() == 3 || (parameters.size() == 2 && lastBookStoreSearchID != -1)) {
+                System.out.println(lastLibrarySearchID);
+                if (parameters.size() == 3 || (parameters.size() == 2 && lastLibrarySearchID != -1)) {
                     if(lastLibrarySearchID != -1){
                         parameters.add(((Long)lastBookStoreSearchID).toString());
                     }
@@ -178,6 +181,19 @@ public class LibraryServer {
                     systemResponse = userRequest.performRequest();
                 }
                 break;
+            case "borrowed":
+                if(parameters.size() ==2){
+                    System.out.println("I'm here");
+                    userRequest = new BorrowedRequest(library, parameters);
+                    systemResponse = userRequest.performRequest();
+                }
+                break;
+            case "report":
+                userRequest = new ReportRequest(library);
+                systemResponse = userRequest.performRequest();
+                break;
+            case "return":
+
             default:
                 System.out.println("Invalid command, please try again");
                 break;

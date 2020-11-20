@@ -135,6 +135,11 @@ public class TimeManager implements Serializable {
         return format.format(calendar.getTime());
     }
 
+    public String getFormattedDate(Date date)
+    {
+        return format.format(date);
+    }
+
     public String getFormattedTime()
     {
         UpdateCalendar();

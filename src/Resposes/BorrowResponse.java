@@ -29,8 +29,12 @@ public class BorrowResponse implements Response{
         responseMessage = "Visitor has an outstanding fine of $" + fine;
     }
 
-    public BorrowResponse(int num){
-        responseMessage = ((Integer)num).toString();
+    public BorrowResponse(int num, String dueDate){
+        responseMessage = dueDate;
+    }
+
+    public BorrowResponse(long ISBN){
+        responseMessage = ISBN + " is not an ISBN that the library has available, or user is not currently visiting";
     }
     @Override
     public RequestNames.RequestName getCommand() {

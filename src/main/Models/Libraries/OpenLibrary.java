@@ -104,9 +104,30 @@ public class OpenLibrary extends LibraryBase implements Serializable {
      * @param ISBN the ISBN of the book attempting to be checked out
      * @return true if the book was sussessfully checked out, false otherwise
      */
-    public boolean borrowBook(Long VisitorID, Long ISBN) {
-        Inventory.get(ISBN).checkoutBook();
-        return Register.get(VisitorID).addCheckedOutBook(Inventory.get(ISBN).getBook());
+    public boolean borrowBook(Long visitorID, Long ISBN) {
+        if(Inventory.containsKey(ISBN) && this.IsVisiting(visitorID)) {
+
+            Inventory.get(ISBN).checkoutBook();
+            return Register.get(visitorID).addCheckedOutBook(Inventory.get(ISBN).getBook());
+        }
+        return false;
     }
 
+    /**
+     * private helper method to determine if the user is currently visiting
+     * @param visitorID Id of the visitor
+     * @return true if user is visiting, false if not
+     */
+    private boolean IsVisiting(Long visitorID){
+        boolean isVisiting = false;
+        for(Visit v : Visits){
+            //if the visitor is in this visit, and the visit is ongoing
+            if(visitorID == v.getVisitorID() && v.getIsOngoingVisit()){
+                isVisiting = true;
+            }
+        }
+
+        return isVisiting;
+
+    }
 }

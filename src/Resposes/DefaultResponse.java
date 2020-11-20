@@ -35,6 +35,7 @@ public class DefaultResponse implements Response {
                 "\nBuy: quantity, id, [ids]; (where id is the last book searched, and [ids] is a comma seperated list of other books" +
                 "\nAdvance: number-of-days, number-of-hours; (where days is between 0 and 7, and hours is between 0 and 23)" +
                 "\nDateTime" +
-                "\nreport: days";
+                "\nReport: days" +
+                "\nSave";
     }
 }

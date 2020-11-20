@@ -34,7 +34,7 @@ public class BorrowResponse implements Response{
     }
 
     public BorrowResponse(long ISBN){
-        responseMessage = ISBN + " is not an ISBN that the library has available";
+        responseMessage = ISBN + " is not an ISBN that the library has available, or user is not currently visiting";
     }
     @Override
     public RequestNames.RequestName getCommand() {

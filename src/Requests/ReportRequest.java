@@ -1,13 +1,8 @@
 package Requests;
 
-import Resposes.RegisterResponse;
 import Resposes.ReportResponse;
 import Resposes.Response;
 import main.Models.Libraries.LibraryBase;
-import main.Models.OwningLibrary;
-import main.Models.Visitor;
-
-import java.util.ArrayList;
 
 /**
  * Represents the "Statistics" request, reports library info

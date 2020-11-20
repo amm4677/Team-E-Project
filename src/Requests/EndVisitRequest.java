@@ -3,8 +3,6 @@ package Requests;
 import Resposes.EndVisitResponse;
 import Resposes.Response;
 import main.Models.Libraries.LibraryBase;
-import main.Models.LibraryEntry;
-import main.Models.OwningLibrary;
 import main.Models.Visit;
 
 import java.util.ArrayList;

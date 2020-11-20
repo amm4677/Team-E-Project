@@ -80,16 +80,19 @@ public class BorrowRequest implements Request {
 
         //if all of the above passed, we can attempt to check out the books
 
+        boolean borrowed = false;
 
         for(long ID : ISBNs) {
            /* if (!libraryProxy.containsBook(ID)) {
                 libraryProxy.borrowBook(visitorID, ID);
             }*/
-            libraryProxy.borrowBook(visitorID, ID);
+            borrowed = libraryProxy.borrowBook(visitorID, ID);
         }
         //todo here dummy
-        LocalDate dueDate = LocalDate.now().plusDays(7);
-        return new BorrowResponse(1, dueDate.toString());
-
+        if(borrowed) {
+            LocalDate dueDate = LocalDate.now().plusDays(7);
+            return new BorrowResponse(1, dueDate.toString());
+        }
+        return new BorrowResponse(ISBNs.get(0));
     }
 }

@@ -172,9 +172,10 @@ public class Visitor implements Serializable {
     public Boolean addCheckedOutBook(Book book)
     {
         checkOutState stateCheckOut = new checkOutState();
+        TimeManager time = TimeManager.getInstance();
 
         if(this.booksCheckedOut.size() < 5) {
-            this.booksCheckedOut.add(new CheckedOut(book, ID, new Date()));
+            this.booksCheckedOut.add(new CheckedOut(book, ID, time.getFormattedDate()));
             ableToCheckOut ableTo = new ableToCheckOut();
             return ableTo.canCheckOut(stateCheckOut);
         } else {
@@ -193,12 +194,15 @@ public class Visitor implements Serializable {
      * @return if the book was successfully removed from the list of books checked out.
      */
     public int checkInBook(CheckedOut checkedOut) {
-        Date today = new Date(0);
+        TimeManager time = TimeManager.getInstance();
+
+        Date today = time.getDate();
         int cost;
         long difference;
         long differenceInDays;
 
-        difference = Math.abs(today.getTime() - checkedOut.getDueDate().getTime());
+        Date dueDate = new Date(checkedOut.getDueDate());
+        difference = Math.abs(today.getTime() - dueDate.getTime());
         differenceInDays = TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS);
 
         if (differenceInDays <= 7) {

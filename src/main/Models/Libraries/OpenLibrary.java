@@ -105,8 +105,11 @@ public class OpenLibrary extends LibraryBase implements Serializable {
      * @return true if the book was sussessfully checked out, false otherwise
      */
     public boolean borrowBook(Long VisitorID, Long ISBN) {
-        Inventory.get(ISBN).checkoutBook();
-        return Register.get(VisitorID).addCheckedOutBook(Inventory.get(ISBN).getBook());
+        if(Inventory.containsKey(ISBN)) {
+            Inventory.get(ISBN).checkoutBook();
+            return Register.get(VisitorID).addCheckedOutBook(Inventory.get(ISBN).getBook());
+        }
+        return false;
     }
 
 }

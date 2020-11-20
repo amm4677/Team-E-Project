@@ -1,6 +1,8 @@
 package main.Models.StrategyCostCalc;
 
 import main.Models.CheckedOut;
+import main.Models.TimeManager;
+import org.w3c.dom.html.HTMLImageElement;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -16,13 +18,16 @@ import java.util.concurrent.TimeUnit;
 public class Returned2To11WeeksLate implements TransactionCalculator{
     @Override
     public int calculateCost(CheckedOut checkedout) {
-        Date today = new Date(0);
+        TimeManager time = TimeManager.getInstance();
+
+        Date today = time.getDate();
+        Date dueDate = new Date(checkedout.getDueDate());
         int cost = 10;
         long difference;
         long differenceInDays;
         int weeksLate;
 
-        difference = Math.abs(today.getTime() - checkedout.getDueDate().getTime());
+        difference = Math.abs(today.getTime() - dueDate.getTime());
         differenceInDays = TimeUnit.DAYS.convert(difference, TimeUnit.MILLISECONDS);
 
         weeksLate = (int) Math.ceil(differenceInDays/7);

@@ -23,7 +23,7 @@ public class BorrowedResponse implements Response{
         int index = 0;
 
         for(CheckedOut book : booksBorrowed){
-            responseMessage = responseMessage + "\n" + index + ", " +
+            responseMessage = responseMessage + " >> \n" + index + ", " +
                     book.getBook().getISBN() + ", " + book.getBook().getTitle() +
                     ", " + book.getDueDate();
         }

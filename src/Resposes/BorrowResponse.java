@@ -32,6 +32,10 @@ public class BorrowResponse implements Response{
     public BorrowResponse(int num, String dueDate){
         responseMessage = dueDate;
     }
+
+    public BorrowResponse(long ISBN){
+        responseMessage = ISBN + " is not an ISBN that the library has available";
+    }
     @Override
     public RequestNames.RequestName getCommand() {
         return COMMAND;
